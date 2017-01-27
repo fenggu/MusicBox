@@ -1,0 +1,274 @@
+*{ 
+  font-family: "微软雅黑";
+  margin: 0;
+  padding: 0;
+}
+html {
+    font-size: 62.5%; /* 10÷16=62.5% */
+}
+@media only screen and (min-width: 481px){
+    html {
+        font-size: 94%!important; /* 15.04÷16=94% */
+    }
+}
+@media only screen and (min-width: 561px){
+    html {
+        font-size: 109%!important; /* 17.44÷16=109% */
+    }
+
+}
+@media only screen and (min-width: 641px){
+    html {
+        font-size: 125%!important; /* 20÷16=125% */
+    }
+}
+html {
+    background: #fff
+} 
+@topbar: #66CCFF;
+.wborder{
+    border: 1px solid @topbar;
+    } 
+
+.top-bar {
+    width: 100%;
+    text-align: center;
+    position: relative;
+    height: 4rem;
+    line-height: 4rem;
+    font-size: 1.9rem;
+    .iconfont { 
+        position: absolute;
+        left: 1rem; 
+    }
+}
+.top-btn {
+    width: 100%;
+    height: 5.5rem;
+    background-color: #fff; 
+    position: relative;
+    display: flex;
+    div {
+        flex: 1;
+        display: inline-block; 
+        display: flex;
+        span {
+            box-sizing: border-box;
+            flex: 1;
+            text-align: center;
+            color: @topbar;
+            height: 3rem;
+            line-height: 3rem;
+            margin-top: 1.25rem; 
+            border-top-right-radius: 3px;
+            border-bottom-right-radius: 3px;
+            .wborder;
+            &:first-child{
+                border-right: 0; 
+                border-top-right-radius: 0px;
+                border-bottom-right-radius: 0px;
+                border-top-left-radius: 3px;
+                border-bottom-left-radius: 3px;
+            }
+        }
+        span.tb-active {
+            background: @topbar;
+            color: #fff;
+            border-color: @topbar;
+        }
+        &:last-child{
+            flex: 1;
+            span {
+                position: absolute;
+                right: 0;
+                color: #fff;  
+                border: 0;
+            }
+        }
+    }
+    .iconfont {
+        color: #333;
+        position: relative;
+        right: 2rem;
+        font-size: 2rem;
+    }
+} 
+
+.mine-btn {
+    position: relative;
+    display: flex;
+    width: 100%;
+    height: auto;
+    div {
+        flex: 1;
+            text-align: center;
+        p { 
+        }
+    }
+}
+
+.list-title {
+    width: 100%;
+    height: 3.5rem;
+    padding-top: 1rem;
+    span {
+        margin-left: 2%;
+        display: block;  
+        border-left: 3px solid #008AB8;
+    }
+}
+
+.list-header {
+    width: 100%;
+    height: 10rem;
+    padding-top: 1rem; 
+    position: relative;
+    padding-left: 9rem;
+    img {
+        width: 7rem;
+        height: auto;
+        position: absolute;
+        top: 1.5rem;
+        left: 1rem;
+    }
+    .iconfont {
+        float: right;
+        margin-right: 3rem
+    }
+}
+.play-list {
+    div {
+        position: relative;
+        height: 4rem;
+        border-bottom: 1px solid #eee;
+        img {
+            position: absolute;
+            height: 3rem;
+            top: 0.5rem;
+            left: 1rem;
+        }
+        p {
+            padding-left: 5rem;
+            line-height: 4rem;
+            font-size: 1.7rem;
+        }
+    }
+}
+.song-list {
+    div {
+        height: 4rem;
+        border-top: 1px solid #eee;
+        position: relative;
+        small { 
+            position: absolute;
+            left: 0.1rem; 
+            color: #777;
+        }
+        p {
+            padding-left: 1rem;
+            line-height: 4rem;
+            font-size: 1.7rem;
+        }
+        span {
+            color: #999;
+            font-siz: 1.3rem;
+        }
+        .iconfont {
+            position: absolute;
+            right: 1rem;
+            height: 0.5rem;
+            top: 1.2rem;
+        }
+    }
+}
+.hidden {
+    display: none;
+}
+.player {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    border-top: 1px solid #eee;
+    height: 6rem;
+    img {
+        position: absolute;
+        bottom: 1rem;
+        width: 4rem;
+        left: 1rem;
+        z-index: -100;
+    }
+    p {
+        display: inline-block;
+        position: fixed;
+        bottom: 3rem;
+        left: 6rem;
+        font-size: 1.7rem;
+        width: 65%;
+        .iconfont {
+            position: fixed;
+            right: 1rem;
+        }
+    }
+    > div {
+        display: inline-block;
+    }
+    .player-pic {
+        display: inline-block;
+        position: relative;
+        width: 6rem;
+        height: 6rem;
+        text-align: center;
+    }
+    .player-btn {
+        z-index: 999;
+        position: relative; 
+        top: -3.5rem;
+        left: 8.5rem;
+        .iconfont { 
+            margin-right: 1rem;
+            font-size: 2rem;
+        }
+    }
+    .player-type { 
+        .iconfont {
+            font-size: 2rem;
+            position: fixed;
+            bottom: 1rem;
+            right: 1rem;
+        }
+    }
+    .ant-progress-line {  
+        div {
+            width: 50%;
+            position: fixed;
+            bottom: 1.5rem;
+            left: 6rem;
+        }
+        .progress-background {
+            background: #eee;
+            height: 5px
+        }
+        .progress-active {
+            background: #66CCFF;
+            height: 5px;
+            z-index: 999;
+        }
+    }
+    .time {
+        position: fixed;
+        bottom: 1rem;
+        right: 3rem
+    }
+}
+.input-search {
+    width: 90%;
+    margin: 5%;
+}
+.login-form{
+
+    width: 90%;
+    margin-left: 5%;
+    > div {
+        margin-top: 10%;
+    }
+}
