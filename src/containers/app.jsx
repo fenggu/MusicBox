@@ -9,7 +9,14 @@ import reducer from '../Redux/reducers.js';
 // import '../public/iconfont.css'
 import './index.less';
 
-var initState = {  
+var initState = { 
+  user: {
+    loggedIn: false,
+    username: "", //username
+    like: [], //我喜欢
+    history: [], //最近播放
+    songlist: [] //我的歌单
+  }, 
   songlist: { //歌单
     '0': {
       'title': 'song1',

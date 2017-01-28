@@ -65,6 +65,7 @@
   },
   "devDependencies": {
     "antd": "^2.5.3",
+    "axios": "^0.15.3",
     "babel-core": "^6.7.2",
     "babel-eslint": "^6.0.0",
     "babel-loader": "^6.2.4",

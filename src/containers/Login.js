@@ -26,15 +26,15 @@ class RootLogin extends Component {
             var user = this.state.user
             user[key] = e.target.value
             this.setState({ user })
-            console.log(this.state)
         }
     }
 
     handleSubmit = e => {
         e.preventDefault();
         const { handleLogin } = this.props
-        var { user } = this.state 
-        this.props.form.validateFields((errors) => {
+        const { getFieldsValue, validateFields } = this.props.form;
+        var user = getFieldsValue()
+        validateFields((errors) => {
           if (errors) {
             return false
           }
@@ -48,9 +48,9 @@ class RootLogin extends Component {
 
         return ( 
             <Form onSubmit={this.handleSubmit} className="login-form">
-              <TopBar title="aa"></TopBar>
+              <TopBar title="登录"></TopBar>
               <FormItem>
-                {getFieldDecorator('userName', {
+                {getFieldDecorator('username', {
                   rules: [{ required: true, message: 'Please input your username!' }],
                 })(
                   <Input addonBefore={<Icon type="user" />} placeholder="Username" />

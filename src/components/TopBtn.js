@@ -3,23 +3,27 @@ import { Link ,browserHistory } from 'react-router';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux'  
 import { Menu, Dropdown, Icon } from 'antd';
-
+import { autoLoginAction, loginAction ,autoLoginAjax} from '../Redux/actions.js'
 class RootTopBtn extends Component {
     constructor(props) {
         super(props); 
     } 
 
+    componentWillMount() {
+      var { autoLogin, handleajax } = this.props
+      autoLogin()
+    }
+
     render() { 
+        let { user } = this.props
         const menu = (
           <Menu>
             <Menu.Item>
-              <Link to="/login">登陆</Link> 
+              { user.loggedIn ?  <Link to="/login">退出登录</Link> : <Link to="/login">登录</Link>     
+              }
             </Menu.Item>
             <Menu.Item>
-              <a target="_blank" rel="noopener noreferrer" href="http://www.taobao.com/">关于</a>
-            </Menu.Item>
-            <Menu.Item>
-              <a target="_blank" rel="noopener noreferrer" href="http://www.tmall.com/">退出登陆</a>
+              <Link to="/about">关于</Link>
             </Menu.Item>
           </Menu>
         );
@@ -34,13 +38,9 @@ class RootTopBtn extends Component {
               </div>
               <div>
                 <span> 
-
                   <Dropdown overlay={menu}>
-                    <a className="ant-dropdown-link" href="#">
-                      <i className="iconfont icon-gengduo"></i>
-                    </a>
-                  </Dropdown>
-                  
+                    <i className="iconfont icon-gengduo"></i> 
+                  </Dropdown>   
                 </span>
               </div> 
             </header>
@@ -50,11 +50,14 @@ class RootTopBtn extends Component {
 
 function mapStateToProps(state) { 
     return { 
+      user: state.user
     }
 }
 
 function mapDispatchToProps(dispatch) {
     return bindActionCreators({  
+      autoLogin: autoLoginAction,
+      handleajax: autoLoginAjax
     }, dispatch)
 }
 
