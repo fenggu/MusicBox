@@ -1,12 +1,25 @@
 import { browserHistory } from 'react-router'
 import fetch from 'isomorphic-fetch'
-import $ from 'jquery'
 /*
  * action 类型
  */
+export const next = 'next'; //下一首
+
+/******* ajax ********/
 export const adduser = 'adduser'; //注册
 export const login = 'login'; //登录 
-export const next = 'next'; //下一首
+export const getsongs = 'getsongs'; //获取当前播放列表
+export const gethistory = 'gethistory'; //获取最近播放
+export const getlikes = 'getlikes'; //获取收藏
+export const like = 'like'; //添加收藏
+export const getsonglist = 'getsonglist'; //获取歌单
+export const getplaylist = 'getplaylist'; //获取歌单列表 楼上父级
+export const getmusiclist = 'getmusiclist'; //获取音乐馆列表
+export const searchmusic = 'searchmusic'; //搜索音乐 
+export const searchmusicname = 'searchmusicname'; //搜索框提示名字
+
+
+
 /*
  * action 创建函数
  */
@@ -25,6 +38,7 @@ export function adduserAction(user) { //注册
     return dispatch => {
         return fetch('/v1/user/sign', {
             method: 'post',
+            credentials: 'include', //配置cookie来获取session
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
@@ -54,6 +68,7 @@ export function loginAction(user) { //登录
     return dispatch => {
         return fetch('/v1/user/login', {
             method: 'post',
+            credentials: 'include', //配置cookie来获取session
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
@@ -94,11 +109,63 @@ export function autoLoginAction() { //自动登录
                 console.log(json.error)
             } else {
                 dispatch(getuser(json.data))
-                browserHistory.push("/")
                 console.log(json.data)
             }
         }).catch(function(err) {
             console.log(err)
         });
+    }
+}
+
+function getmusiclistAction(list) {
+    return { type: getmusiclist, list: list }
+}
+export function getmusiclistActionClick() {
+    return dispatch => {
+        return fetch('/v1/musiclists', {
+            method: 'get',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        }).then(function(response) {
+            return response.json()
+        }).then(function(json) {
+            if (!json.success) {
+                console.log(json.error)
+            } else {
+                dispatch(getmusiclistAction(json.data))
+                console.log(json.data)
+            }
+        }).catch(function(err) {
+            console.log(err)
+        })
+    }
+}
+
+function getsonglistAction(list) {
+    return { type: getsonglist, list: list }
+}
+
+export function getsonglistActionClick (id) {
+    return dispatch => {
+        return fetch('/v1/songlist/' + id, {
+            method: 'get',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        }).then(function(response) {
+            return response.json()
+        }).then(function(json) {
+            if (!json.success) {
+                console.log(json.error)
+            } else {
+                dispatch(getsonglistAction(json.data))
+                console.log(json.data)
+            }
+        }).catch(function(err) {
+            console.log(err)
+        })
     }
 }

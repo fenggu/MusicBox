@@ -162,10 +162,7 @@ function mapStateToProps(state) {
 }
 
 // Map Redux actions to component props
-function mapDispatchToProps(dispatch) {
-    console.log(getnextsongAction)
-    var  a  = Object.assign({}, getnextsongAction ) 
-    console.log(a) 
+function mapDispatchToProps(dispatch) {  
     
     return bindActionCreators({
         getnextsongAction: getnextsongAction

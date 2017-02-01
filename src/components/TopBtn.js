@@ -4,16 +4,11 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux'  
 import { Menu, Dropdown, Icon } from 'antd';
 import { autoLoginAction, loginAction ,autoLoginAjax} from '../Redux/actions.js'
-class RootTopBtn extends Component {
+class TopBtn extends Component {
     constructor(props) {
         super(props); 
     } 
-
-    componentWillMount() {
-      var { autoLogin, handleajax } = this.props
-      autoLogin()
-    }
-
+ 
     render() { 
         let { user } = this.props
         const menu = (
@@ -33,8 +28,9 @@ class RootTopBtn extends Component {
                 <img src="" alt=""/>
               </div>
               <div>
-                <span className="tb-active">我的</span>
-                <span>音乐馆</span>
+                <span><Link to="/">我的</Link> </span>
+                <span><Link to="/musicbox">音乐馆</Link></span>
+                
               </div>
               <div>
                 <span> 
@@ -47,23 +43,5 @@ class RootTopBtn extends Component {
         )
     }
 }
-
-function mapStateToProps(state) { 
-    return { 
-      user: state.user
-    }
-}
-
-function mapDispatchToProps(dispatch) {
-    return bindActionCreators({  
-      autoLogin: autoLoginAction,
-      handleajax: autoLoginAjax
-    }, dispatch)
-}
-
-let TopBtn = connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(RootTopBtn);
-export { RootTopBtn }
+ 
 export default  TopBtn

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux'; 
 import { getlistAction } from '../Redux/actions.js'
 import { bindActionCreators } from 'redux'
-class RootSongList extends Component {
+class SongList extends Component {
     constructor(props) {
         super(props);
     } 
@@ -22,8 +22,7 @@ class RootSongList extends Component {
     }
 
     render() {   
-        let { songlist } = this.props;
-        songlist = Array.from(songlist)
+        const { songlist } = this.props
         return ( 
             <div className="song-list">
                 {
@@ -38,22 +37,22 @@ class RootSongList extends Component {
     }
 }
 
-function mapStateToProps(state) {
-    // 这里拿到的state就是store里面给的state
-    return { 
-        songlist: state.songlist
-    }
-}
+// function mapStateToProps(state) {
+//     // 这里拿到的state就是store里面给的state
+//     return { 
+//         songlist: state.songlist
+//     }
+// }
 
-// Map Redux actions to component props
-function mapDispatchToProps(dispatch) {
-    return { 
-    }
-}
+// // Map Redux actions to component props
+// function mapDispatchToProps(dispatch) {
+//     return { 
+//     }
+// }
 
-let SongList = connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(RootSongList)
-export { RootSongList }
+// let SongList = connect(
+//     mapStateToProps,
+//     mapDispatchToProps
+// )(RootSongList)
+// export { RootSongList }
 export default SongList;

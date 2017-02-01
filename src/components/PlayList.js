@@ -30,7 +30,7 @@ class RootPlayList extends Component {
             <div className="play-list">
                 {
                     playlist.map((song, index) =>  
-                        <Link key={index} to="list/id">
+                        <Link key={index} to={ "/list/" + song._id }>
                             <div>
                                 <img src={song.pic} alt={song.title}/>
                                 <p>{song.title}</p>

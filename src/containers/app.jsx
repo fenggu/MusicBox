@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Router, Route, browserHistory, Link ,IndexRoute} from 'react-router';
-import { Home, List, DeskTop, Login, Sign } from './index.js' 
+import { Home, List, DeskTop, Login, Sign, MusicBox } from './index.js' 
 import { Provider, connect } from 'react-redux'; 
 import thunk from 'redux-thunk'
 import createLogger from 'redux-logger'
@@ -17,39 +17,26 @@ var initState = {
     history: [], //最近播放
     songlist: [] //我的歌单
   }, 
-  songlist: { //歌单
-    '0': {
-      'title': 'song1',
-      'url': '',
-      'pic': '',
-      'author': '123'
-    },
-    '1': {
-      'title': 'song1',
-      'url': '',
-      'pic': '',
-      'author': '123'
-    },
-    length: 2
+  songlist: {
+    list: []
   },
 
-  playlist: { //歌单列表
-    '0': {
+  playlist: [ //歌单列表
+    {
       'title': 'song144', 
       'pic': 'http://localhost:8081/public/default.jpg', 
       'author': '123'
     },
-    '1': {
+    {
       'title': 'song133', 
       'pic': 'http://localhost:8081/public/default.jpg',
       'author': '123'
     },
-    length: 2
-  },
+  ],
   song: {
 
   },
-  songs: { //当前播放的列表
+  songs: { //当前播放的列表 计划前端使用localstorges 存储到cookie
     '0': {
       'title': '夢灯籠',
       'url': 'http://localhost:8081/public/RADWIMPS%20-%20%E5%A4%A2%E7%81%AF%E7%B1%A0.mp3',
@@ -72,6 +59,9 @@ var initState = {
       'author': '阿部真央'
     },
     length: 3
+  },
+  musiclist: {
+    list: []
   }
 }    
 
@@ -96,9 +86,10 @@ class App extends Component {
             <Router history={ browserHistory }>
               <Route path="/" component={ DeskTop }> 
                 <IndexRoute component={ Home }/>  
-                <Route path="/list/:type" component={ List }/>  
+                <Route path="/musicbox" component={ MusicBox }/> 
+                <Route path="/list/:id" component={ List }/>  
                 <Route path="/login" component={ Login }/>  
-                <Route path="/sign" component={ Sign }/>  
+                <Route path="/sign" component={ Sign }/>   
               </Route>
             </Router>  
           </div>

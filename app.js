@@ -73,7 +73,7 @@ MongoClient.connect('mongodb://localhost:27017/' + dbn, function(err, instance) 
         var host = webapp.address().address;
         var port = webapp.address().port;
 
-        var docRoute = require('./app/routes/routes.js');
+        var docRoute = require('./app/routes.js');
         app.use('/v1/', docRoute);
         app.use(express.static('build'));
         app.use('*', (req, res) => {

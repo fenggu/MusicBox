@@ -1,17 +1,23 @@
 import React, { Component } from 'react'; 
-import { MineBtn, TopBtn, PlayList } from '../components'
-import { Input } from 'antd';
+import { MineBtn, TopBtn, PlayList } from '../components' 
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux'  
+import { Menu, Dropdown, Icon, Input } from 'antd'; 
 const Search = Input.Search;
 
-class Home extends Component {
+class RootHome extends Component {
     constructor(props) {
         super(props);
     }
 
+    componentWillMount() {
+    }
+
     render() {
+        const { user } = this.props
         return ( 
           <div>
-            <TopBtn />
+            <TopBtn user = {user}/>
             <div className="input-search">
               <Search />
             </div>
@@ -27,4 +33,20 @@ class Home extends Component {
     }
 }
 
-export default Home;
+function mapStateToProps(state) { 
+    return { 
+      user: state.user
+    }
+}
+
+function mapDispatchToProps(dispatch) {
+    return bindActionCreators({   
+    }, dispatch)
+}
+
+let Home = connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(RootHome);
+export { RootHome }
+export default  Home 
