@@ -26,20 +26,19 @@ var initState = {
   song: {
 
   },
-  songs: [ //当前播放的列表 计划前端使用localstorges 存储到cookie
-    { 
-      'title': '',
-      'url': '',
-      'type': 1,
-      'pic':'http://localhost:8081/public/default.jpg',  
-      'author': ''
-    }
-  ],
+  songs: {
+    list: [ //当前播放的列表 计划前端使用localstorges 存储到cookie
+      ]
+  },
   musiclist: {
     list: []
   }
 }    
-
+if (!localStorage.songs) {
+  localStorage.songs = JSON.stringify(initState.songs)
+} else {
+  initState.songs = JSON.parse(localStorage.songs)
+}
 const logger = createLogger() 
 const createStoreWithMiddleware = applyMiddleware(
   thunk, 

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router'; 
 import { Progress } from 'antd'
-import { getnextsongAction, addlikesongActionClick } from '../Redux/actions.js'
+import { getnextsongAction, addlikesongActionClick, addsongsAction } from '../Redux/actions.js'
 import { bindActionCreators } from 'redux'
 import _ from 'lodash'
 class RootPlayer extends Component {
@@ -25,13 +25,15 @@ class RootPlayer extends Component {
     componentWillMount() { 
         let { song, songs, getnextsongAction } = this.props  
         var index = this.state.index 
-        var _song = songs[index]   
+        var _song = songs.list[index]   
         getnextsongAction(_song) 
     } 
 
     componentWillUpdate() {
         let { song } = this.props
         let { audio, oId } = this.state
+
+        if (!song) return false
         if (oId == "" || song._id != oId) {
             oId = song._id  
             audio.currentTime = 0 
@@ -72,18 +74,32 @@ class RootPlayer extends Component {
     }
 
     next(value){
-        var { songs, getnextsongAction } = this.props
+        var { songs, getnextsongAction, addsongs} = this.props
         var { index, audio } = this.state
         if (value == -1 && index == 0) {
             return false;
         }
-        if ( index == songs.length-1 ) return false
+        console.log(index)
+        if ( value == 1 &&index == songs.list.length-1 ) return false
         index = index + value   
+
         audio.currentTime = 0 
         audio.dom.currentTime = 0
         audio.dom.autoplay = true
-        var song = songs[index] 
+        var song = songs.list[index] 
         getnextsongAction(song)
+
+        var Ids = []
+        var locallist = JSON.parse(localStorage.songs)
+        locallist.list.map( s => {
+            Ids.push(s._id)
+        }) 
+        if (Ids.indexOf(song._id) <= -1) {
+            songs.list.push(song)
+            addsongs(songs)
+            var str = JSON.stringify(songs); 
+            localStorage.songs = str 
+        }
         this.setState({ 
             index, 
             audio, 
@@ -149,7 +165,7 @@ class RootPlayer extends Component {
         return ( 
             <div className="player"> 
                 <div className="player-pic"  onClick={this.bindFuncs.onPlay.bind(this)} >
-                    <img src={song.pic} alt=""/>
+                    <img src={ song == undefined? 'http://localhost:8081/public/default.jpg': song.pic } alt=""/>
                 </div>
                 <div className="player-btn">
                     <i className="iconfont icon-xiayishou1" onClick={this.bindFuncs.next.bind(this,-1)}></i>
@@ -162,8 +178,8 @@ class RootPlayer extends Component {
                     <i className="iconfont icon-suiji2"></i>
                     <i className="iconfont icon-ttpodicon"></i>
                 </div>
-                <p>{song.title}
-                    <i className={this.isLikeSong(song._id)} onClick={addlikesong.bind(this, song._id)}></i> 
+                <p>{song ? song.title: ""}
+                    <i className={this.isLikeSong(song ? song._id: "")} onClick={addlikesong.bind(this, song? song._id : "")}></i> 
                 </p>  
                 <div className="ant-progress-line">
                     <div style={{width: this.state.progress}}  onClick={this.bindFuncs.audioSeek.bind(this)}  className="progress-active"></div>
@@ -173,7 +189,7 @@ class RootPlayer extends Component {
                     <span>{this.bindFuncs.getTime(audio.currentTime)}/</span>
                     <span>{this.bindFuncs.getTime(audio.duration)}</span>
                 </span>
-                <audio id="audio" onTimeUpdate={this.bindFuncs.getProgress.bind(this)} ref="audio" src={song.url}></audio>
+                <audio id="audio" onTimeUpdate={this.bindFuncs.getProgress.bind(this)} ref="audio" src={song? song.url:""}></audio>
             </div>
         )
     }
@@ -192,7 +208,8 @@ function mapDispatchToProps(dispatch) {
     
     return bindActionCreators({
         getnextsongAction: getnextsongAction,
-        addlikesong: addlikesongActionClick
+        addlikesong: addlikesongActionClick,
+        addsongs: addsongsAction
     }, dispatch) 
 }
 

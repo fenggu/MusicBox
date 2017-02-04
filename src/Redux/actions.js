@@ -18,8 +18,7 @@ export const getplaylist = 'getplaylist'; //获取歌单列表 楼上父级
 export const getmusiclist = 'getmusiclist'; //获取音乐馆列表
 export const searchmusic = 'searchmusic'; //搜索音乐 
 export const searchmusicname = 'searchmusicname'; //搜索框提示名字
-
-
+export const addsongs = 'addsongs'; //添加song到localstorge
 
 /*
  * action 创建函数
@@ -275,4 +274,8 @@ export function getlikesActionClick (id) {
             console.log(err)
         })
     }
+}
+
+export function addsongsAction(songs) {
+    return { type: addsongs, songs: songs}
 }

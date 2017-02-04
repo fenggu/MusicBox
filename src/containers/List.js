@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router'; 
 import { getlistAction } from '../Redux/actions.js'
 import { bindActionCreators } from 'redux'
-import { getsonglistActionClick, getnextsongAction, addlikelistActionClick, getlikesActionClick } from '../Redux/actions'
+import { getsonglistActionClick, getnextsongAction, addlikelistActionClick, getlikesActionClick, addsongsAction } from '../Redux/actions'
 import { SongList, TopBar } from '../components'
 class RootList extends Component {
 
@@ -51,7 +51,7 @@ class RootList extends Component {
     }
 
     render() {    
-        var { songlist, changesong, addlike } = this.props
+        var { songlist, songs, changesong, addlike, addsongs } = this.props
         console.log(songlist) 
         var list = songlist.list  
         return ( 
@@ -66,7 +66,7 @@ class RootList extends Component {
                 </div>
                 <header>  
                 </header>
-                <SongList songlist={list} changesong={changesong}/>
+                <SongList songlist={list} addsongs={addsongs} songs={songs} changesong={changesong}/>
             </div>
         )
     }
@@ -76,7 +76,8 @@ function mapStateToProps(state) {
     // 这里拿到的state就是store里面给的state
     return {  
         user: state.user,
-        songlist: state.songlist
+        songlist: state.songlist,
+        songs: state.songs
     }
 }
 
@@ -86,6 +87,7 @@ function mapDispatchToProps(dispatch) {
         changesong: getnextsongAction,
         getlist: getsonglistActionClick,
         addlike: addlikelistActionClick,
+        addsongs: addsongsAction,
         getlikes: getlikesActionClick
     }, dispatch)
 }

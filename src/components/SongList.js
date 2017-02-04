@@ -21,13 +21,31 @@ class SongList extends Component {
     componentWillMount() { 
     }
 
+    onChangeSong(song) {
+        var { changesong, songs, addsongs } = this.props
+        var Ids = []
+        var locallist = JSON.parse(localStorage.songs)
+        locallist.list.map( s => {
+            Ids.push(s._id)
+        })
+
+        if (Ids.indexOf(song._id) <= -1) {
+            console.log(songs)
+            songs.list.push(song)
+            addsongs(songs)
+            var str = JSON.stringify(songs); 
+            localStorage.songs = str
+        }
+        changesong(song)
+    }
+
     render() {   
-        const { songlist, changesong } = this.props
+        const { songlist } = this.props
         return ( 
             <div className="song-list">
                 {
                     songlist.map((song, index) =>   
-                        <div key={index} onClick={ changesong.bind(this, song) }> 
+                        <div key={index} onClick={ this.onChangeSong.bind(this, song) }> 
                             <p> <small>{index + 1}</small>{song.title} <span>{song.author}</span></p>
                         </div> 
                     )

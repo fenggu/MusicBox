@@ -21,6 +21,8 @@ function Reducer(state, action) {
         case actions.getplaylist:
             return Object.assign({}, state, { playlist: action.list })
 
+        case actions.addsongs: 
+            return Object.assign({}, state, { songs: action.songs})        
         default:
             return state
     }
