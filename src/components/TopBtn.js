@@ -32,11 +32,14 @@ class TopBtn extends Component {
                 <span><Link to="/musicbox">音乐馆</Link></span>
                 
               </div>
-              <div>
-                <span> 
-                  <Dropdown overlay={menu}>
-                    <i className="iconfont icon-gengduo"></i> 
-                  </Dropdown>   
+              <div> 
+                <span>
+                  <Dropdown overlay={menu} trigger={['click']}>
+                      <a className="ant-dropdown-link" href="#">
+                        更多 <Icon type="down" />
+                      </a> 
+                   </Dropdown>
+                  
                 </span>
               </div> 
             </header>
