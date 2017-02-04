@@ -22,12 +22,12 @@ class SongList extends Component {
     }
 
     render() {   
-        const { songlist } = this.props
+        const { songlist, changesong } = this.props
         return ( 
             <div className="song-list">
                 {
                     songlist.map((song, index) =>   
-                        <div key={index}> 
+                        <div key={index} onClick={ changesong.bind(this, song) }> 
                             <p> <small>{index + 1}</small>{song.title} <span>{song.author}</span></p>
                         </div> 
                     )

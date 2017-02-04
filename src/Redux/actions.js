@@ -12,6 +12,7 @@ export const getsongs = 'getsongs'; //获取当前播放列表
 export const gethistory = 'gethistory'; //获取最近播放
 export const getlikes = 'getlikes'; //获取收藏
 export const like = 'like'; //添加收藏
+export const likelist = 'likelist'; //添加收藏
 export const getsonglist = 'getsonglist'; //获取歌单
 export const getplaylist = 'getplaylist'; //获取歌单列表 楼上父级
 export const getmusiclist = 'getmusiclist'; //获取音乐馆列表
@@ -31,8 +32,6 @@ export function getnextsongAction(song) {
 export function getuser(user) {
     return { type: login, user: user }
 }
-
-
 
 export function adduserAction(user) { //注册
     return dispatch => {
@@ -151,6 +150,114 @@ export function getsonglistActionClick (id) {
     return dispatch => {
         return fetch('/v1/songlist/' + id, {
             method: 'get',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        }).then(function(response) {
+            return response.json()
+        }).then(function(json) {
+            if (!json.success) {
+                console.log(json.error)
+            } else {
+                dispatch(getsonglistAction(json.data))
+                console.log(json.data)
+            }
+        }).catch(function(err) {
+            console.log(err)
+        })
+    }
+}
+
+export function addlikesongActionClick(id) { //添加收藏
+    return dispatch => {
+        return fetch('/v1/user/likesong', {
+            method: 'post',
+            credentials: 'include', //配置cookie来获取session
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ 
+                songId: id
+            })
+        }).then(function(response) {
+            return response.json()
+        }).then(function(json) { 
+            if (!json.success) {
+                alert(json.error)
+            } else { 
+                dispatch(getuser(json.data))
+            }
+        }).catch(function(err) {
+            console.log(err)
+        });
+    }
+}
+   
+export function addlikelistActionClick(id) { //添加收藏
+    return dispatch => {
+        return fetch('/v1/user/likelist', {
+            method: 'post',
+            credentials: 'include', //配置cookie来获取session
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                songlistId: id
+            })
+        }).then(function(response) {
+            return response.json()
+        }).then(function(json) { 
+            if (!json.success) {
+                console.log(json.error)
+            } else { 
+                dispatch(getuser(json.data))
+            }
+        }).catch(function(err) {
+            console.log(err)
+        });
+    }
+}
+
+export function getplaylistAction(list){
+    return { type: getplaylist, list: list}
+}
+
+export function getplaylistActionClick() {
+    return dispatch => {
+        return fetch('/v1/user/likelist', {
+            method: 'get',
+            credentials: 'include', //配置cookie来获取session
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        }).then(function(response) {
+            return response.json()
+        }).then(function(json) { 
+            if (!json.success) {
+                console.log(json.error)
+            } else { 
+                dispatch(getplaylistAction(json.data))
+            }
+        }).catch(function(err) {
+            console.log(err)
+        });
+    }
+}
+
+
+function getlikesAction(list) {
+    return { type: getsonglist, list: list }
+}
+
+export function getlikesActionClick (id) {
+    return dispatch => {
+        return fetch('/v1/user/likesong', {
+            method: 'get',
+            credentials: 'include', //配置cookie来获取session
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'

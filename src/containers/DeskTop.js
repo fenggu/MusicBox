@@ -10,7 +10,7 @@ class RootDeskTop extends Component {
     } 
 
     componentWillMount() {
-      var { autoLogin, handleajax } = this.props
+      var { autoLogin } = this.props
       autoLogin()
     }
 
@@ -36,8 +36,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return bindActionCreators({  
-      autoLogin: autoLoginAction,
-      handleajax: autoLoginAjax
+      autoLogin: autoLoginAction
     }, dispatch)
 }
 

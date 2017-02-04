@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router'; 
 import { getlistAction } from '../Redux/actions.js'
 import { bindActionCreators } from 'redux'
-import { getsonglistActionClick } from '../Redux/actions'
+import { getsonglistActionClick, getnextsongAction, addlikelistActionClick, getlikesActionClick } from '../Redux/actions'
 import { SongList, TopBar } from '../components'
 class RootList extends Component {
 
@@ -28,31 +28,45 @@ class RootList extends Component {
         return newcontent
     }
 
+    isLikeList(id) {
+        var { user } = this.props
+        if (this.state.id == "likes") return ""
+        if (user.songlist == undefined) return "iconfont icon-weibiaoti1"
+        if (user.songlist.indexOf(id) > -1) {
+            return "iconfont icon-aixin"
+        } else {
+            return "iconfont icon-weibiaoti1"
+        }
+    }
+
     componentWillMount() { 
-        const { getlist } = this.props
+        const { getlist, getlikes } = this.props
         var id = this.state.id
-        getlist(id) 
-        console.log(id)
+        if (id == "likes") {
+            getlikes()
+        } else {
+            getlist(id)  
+        }
 
     }
 
     render() {    
-        var { songlist } = this.props
-        var list = songlist.list
-        console.log(songlist)
+        var { songlist, changesong, addlike } = this.props
+        console.log(songlist) 
+        var list = songlist.list  
         return ( 
             <div className="list"> 
-                <TopBar title="default-title" />
+                <TopBar title={songlist.title} />
                 <div className='list-header'>
-                    <img src="http://localhost:8081/public/default.jpg" alt=""/>
+                    <img src={songlist.pic} alt=""/>
                     <h1>
                         {songlist.title}
-                        <i className="iconfont icon-weibiaoti1"></i>
+                        <i onClick={addlike.bind(this, songlist.id)} className={this.isLikeList(songlist.id)}></i>
                     </h1>
                 </div>
                 <header>  
                 </header>
-                <SongList songlist = {list}/>
+                <SongList songlist={list} changesong={changesong}/>
             </div>
         )
     }
@@ -61,6 +75,7 @@ class RootList extends Component {
 function mapStateToProps(state) {
     // 这里拿到的state就是store里面给的state
     return {  
+        user: state.user,
         songlist: state.songlist
     }
 }
@@ -68,8 +83,10 @@ function mapStateToProps(state) {
 // Map Redux actions to component props
 function mapDispatchToProps(dispatch) {   
     return bindActionCreators({   
-
-        getlist: getsonglistActionClick 
+        changesong: getnextsongAction,
+        getlist: getsonglistActionClick,
+        addlike: addlikelistActionClick,
+        getlikes: getlikesActionClick
     }, dispatch)
 }
 

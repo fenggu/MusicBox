@@ -13,7 +13,7 @@ var initState = {
   user: {
     loggedIn: false,
     username: "", //username
-    like: [], //我喜欢
+    likes: [], //我喜欢
     history: [], //最近播放
     songlist: [] //我的歌单
   }, 
@@ -22,16 +22,6 @@ var initState = {
   },
 
   playlist: [ //歌单列表
-    {
-      'title': 'song144', 
-      'pic': 'http://localhost:8081/public/default.jpg', 
-      'author': '123'
-    },
-    {
-      'title': 'song133', 
-      'pic': 'http://localhost:8081/public/default.jpg',
-      'author': '123'
-    },
   ],
   song: {
 

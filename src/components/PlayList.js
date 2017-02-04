@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router'; 
-import { getlistAction } from '../Redux/actions.js'
+import { getlistAction, getplaylistActionClick } from '../Redux/actions.js'
 import { bindActionCreators } from 'redux'
 class RootPlayList extends Component {
     constructor(props) {
@@ -20,6 +20,9 @@ class RootPlayList extends Component {
     }
 
     componentWillMount() { 
+        let { getplaylist } = this.props
+        getplaylist()
+        console.log(getplaylist())
     }
 
     render() {   
@@ -52,8 +55,9 @@ function mapStateToProps(state) {
 
 // Map Redux actions to component props
 function mapDispatchToProps(dispatch) {
-    return { 
-    }
+    return bindActionCreators({
+        getplaylist: getplaylistActionClick
+    }, dispatch) 
 }
 
 let PlayList = connect(

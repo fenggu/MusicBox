@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router'; 
 import { Progress } from 'antd'
-import { getnextsongAction } from '../Redux/actions.js'
+import { getnextsongAction, addlikesongActionClick } from '../Redux/actions.js'
 import { bindActionCreators } from 'redux'
 import _ from 'lodash'
 class RootPlayer extends Component {
@@ -104,7 +104,15 @@ class RootPlayer extends Component {
         this.setState({progress, audio}) 
     }
 
-
+    isLikeSong(id) {
+        var { user } = this.props
+        if (user.likes == undefined) return "iconfont icon-weibiaoti1"
+        if (user.likes.indexOf(id) > -1) {
+            return "iconfont icon-aixin"
+        } else {
+            return "iconfont icon-weibiaoti1"
+        }
+    }
 
     toLittle(content) { //缩短字体
         var newcontent = ""
@@ -119,7 +127,7 @@ class RootPlayer extends Component {
 
     render() {    
         let { audio } = this.state 
-        let { song } = this.props
+        let { song, addlikesong } = this.props 
         var paused = audio.dom.paused
         return ( 
             <div className="player"> 
@@ -138,7 +146,7 @@ class RootPlayer extends Component {
                     <i className="iconfont icon-ttpodicon"></i>
                 </div>
                 <p>{song.title}
-                    <i className="iconfont icon-weibiaoti1"></i> 
+                    <i className={this.isLikeSong(song._id)} onClick={addlikesong.bind(this, song._id)}></i> 
                 </p>  
                 <div className="ant-progress-line">
                     <div style={{width: this.state.progress}}  onClick={this.bindFuncs.audioSeek.bind(this)}  className="progress-active"></div>
@@ -156,7 +164,8 @@ class RootPlayer extends Component {
 
 function mapStateToProps(state) {
     return {  
-        songs: state.songs,
+        user: state.user,
+        songs: state.songs,//列表
         song: state.song
     }
 }
@@ -165,7 +174,8 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {  
     
     return bindActionCreators({
-        getnextsongAction: getnextsongAction
+        getnextsongAction: getnextsongAction,
+        addlikesong: addlikesongActionClick
     }, dispatch) 
 }
 

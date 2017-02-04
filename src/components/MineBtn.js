@@ -14,8 +14,10 @@ class RootMineBtn extends Component {
                     <p>All</p>
                 </div>
                 <div>
-                    <i>icon</i>
-                    <p>MyLike</p>
+                    <Link to="/list/likes">
+                        <i>icon</i>
+                        <p>MyLike</p>
+                    </Link>
                 </div>
                 <div>
                     <i>icon</i>

@@ -42,8 +42,10 @@ var login = async(req, res) => {
     var username = req.body['username']
     var password = req.body['password']
 
-    var user = await Users.findOne({ username: username })
-    console.log(password, user.password)
+    var user = await Users.findOne({ username: username }) 
+    if (!user) {
+        return res.json({ success: false, error: "账号不存在" })
+    }
     if (password == user.password) {
         sess.loggedIn = true
         sess.userId = user._id
@@ -52,6 +54,7 @@ var login = async(req, res) => {
         sess.like = user.like
         sess.songlist = user.songlist
         var userRet = getSelfInfo(sess)
+        console.log(userRet)
         return res.json({ success: true, data: userRet })
     } else {
         return res.json({ success: false, error: "密码错误！" })
@@ -90,10 +93,11 @@ var getSelf = async(req, res) => {
     if (!user) {
         // sess.loggedIn = false
         return res.json({ success: false, error: '408请重新登录' })
-    }
+    } 
     var userRet = getSelfInfo(sess)
     return res.json({ success: true, data: userRet })
 }
+
 //获取播放列表本地 ***播放列表的接口线不做了吧 改成缓存 
 var getsongs = async(req, res) => {
     var sess = req.session;
@@ -113,25 +117,66 @@ var getPlaylist = async(req, res) => {
         return res.json({ success: false, error: '请先登录' })
     }
     var cond = {}
-    cond._id = ObjectID(session.userId)
+    cond['_id'] = ObjectID(sess.userId)
     try {
         var user = await Users.findOne(cond)
         var songlistIds = user.songlist
     } catch (err) {
         return res.json({ success: false, error: err })
     }
-    cond._id = { $in: songlistIds }
+    var Ids = []
+    songlistIds.map( i => {
+        Ids.push(ObjectID(i))
+    })
+    cond['_id'] = { $in: Ids } 
     try {
-        var songlists = Songlists.find(cond, { _id: 1, songs: 0, pic: 1, title: 1 }).toArray()
+        var songlists = await Songlists.find(cond).toArray() 
     } catch (err) {
         return res.json({ success: false, error: err })
     }
     if (!songlists) {
+        return res.json({ success: false, error: '列表为空' })
     }
 
     return res.json({ success: true, data: songlists })
 }
 
+//获取收藏的单曲
+var getlikes = async(req, res) => {
+    var cond = {} 
+    var sess = req.session
+    if (!sess.loggedIn) {
+        return res.json({ success: false, error: '请先登录！' })
+    }
+
+    var userId = sess.userId  
+    cond._id = ObjectID(userId)
+    try {
+        var user = await Users.findOne(cond)
+    } catch (err) {
+        return res.json({success: false, error: err})
+    }
+
+    var likes = user.likes
+    var Ids = []
+    likes.map( i => {
+        Ids.push(ObjectID(i))
+    })
+    cond._id = { $in: Ids}
+    try {
+        var list = await Songs.find(cond).toArray()
+    } catch (err) {
+        return res.json({ success: false, error: err})
+    }
+    if (!list) {
+        return res.json({ success: false, data: {}, error :"列表为空，快去添加收藏吧"})
+    }
+    var data = {}
+    data.list = list
+    data.title = '我的收藏' 
+    data.id = 'likes' 
+    return res.json({ success: true, data: data})
+}
 /* 获取歌单 通过songlist的id来查找 songs并且返回
     songlist:[
         song{}
@@ -147,7 +192,6 @@ var getSonglist = async(req, res) => {
     cond._id = ObjectID(params.id) 
     try {
         var songlist = await Songlists.findOne(cond)
-        console.log(songlist)
     } catch (err) {
         return res.json({ success: false, error: err })
     }
@@ -161,17 +205,16 @@ var getSonglist = async(req, res) => {
 
     try {
         var songs = await Songs.find(cond).toArray()
-        console.log(songs)
     } catch (err) {
         return res.json({ success: false, error: err })
     }
     var data = {}
     data.title = songlist.title
     data.id = songlist._id
+    data.pic = songlist.pic
     data.list = songs
     res.json({ success: true, data: data })
 }
-
 /*
     musiclist 音乐馆 获取所有歌单 
 */
@@ -208,13 +251,22 @@ var addSongTolikes = async(req, res) => {
 
     if (n > -1) {
         user.likes.splice(n, 1)
-        return res.json({ success: true, data: { _id: req.body['id'] }, msg: "已取消收藏！" })
+        sess.likes.splice(n, 1)
+        try {
+            await Users.save(user)
+            return res.json({ success: true, data: user, msg: "已取消收藏！" })
+        } catch (err) {
+            return res.json({ success: false, error: err })
+        }
     }
-    user.likes.push(songId)
-
+    if (songId){
+        user.likes.push(songId)
+        sess.likes.push(songId)
+    } 
     try {
         await Users.save(user)
-        res.json({ success: true, data: { _id: req.body['id'] }, msg: '已收藏！' }); //前端在调用一次 获取收藏列表的请求
+        var userRet = getSelfInfo(sess)
+        res.json({ success: true, data: userRet , msg: '已收藏！' }); //前端在调用一次 获取收藏列表的请求
     } catch (err) {
         return res.json({ success: false, error: err })
     }
@@ -237,14 +289,28 @@ var addSonglistTolikes = async(req, res) => {
     } catch (err) {
         return res.json({ success: false, error: err })
     }
-    if (user.songlist.indexOf(songlistId) > -1) {
-        return res.json({ success: false, error: "已收藏！" })
-    }
-    user.songlist.push(songlistId)
 
+
+    let n = user.songlist.indexOf(songlistId)
+
+    if (n > -1) {
+        user.songlist.splice(n, 1)
+        sess.songlist.splice(n, 1)
+        try {
+            await Users.save(user)
+            return res.json({ success: true, data: user, msg: "已取消收藏！" })
+        } catch (err) {
+            return res.json({ success: false, error: err })
+        }
+    }
+
+    user.songlist.push(songlistId)
+    sess.songlist.push(songlistId)
+    console.log(user)
     try {
         await Users.save(user)
-        res.json({ success: true, data: { _id: req.body['id'] } }); //前端在调用一次 获取收藏列表的请求
+        var userRet = getSelfInfo(user)
+        res.json({ success: true, data: userRet }); //前端在调用一次 获取收藏列表的请求
     } catch (err) {
         return res.json({ success: false, error: err })
     }
@@ -260,13 +326,23 @@ var getSelfInfo = (sess) => {
         loggedIn: sess.loggedIn,
         userId: sess.userId,
         username: sess.username,
-        like: sess.like,
+        likes: sess.likes,
         history: sess.history,
         songlist: sess.songlist
     }
     return userRet
 }
 
+var getUserRet = (user) => {
+    var userRet = {
+        _id: user._id,
+        username: user.username,
+        likes: user.likes,
+        history: user.history,
+        songlist: user.songlist
+    }
+    return userRet
+}
 module.exports = {
     createUser,
     login,
@@ -276,5 +352,6 @@ module.exports = {
     addSonglistTolikes,
     getMusiclist,
     getSonglist,
+    getlikes,
     getPlaylist
 }

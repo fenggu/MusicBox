@@ -17,6 +17,10 @@ function Reducer(state, action) {
 
         case actions.getsonglist:
             return Object.assign({}, state, { songlist: action.list })
+
+        case actions.getplaylist:
+            return Object.assign({}, state, { playlist: action.list })
+
         default:
             return state
     }
