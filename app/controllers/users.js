@@ -51,7 +51,7 @@ var login = async(req, res) => {
         sess.userId = user._id
         sess.username = user.username
         sess.history = user.history
-        sess.like = user.like
+        sess.likes = user.likes
         sess.songlist = user.songlist
         var userRet = getSelfInfo(sess)
         console.log(userRet)
@@ -147,8 +147,7 @@ var getlikes = async(req, res) => {
     var sess = req.session
     if (!sess.loggedIn) {
         return res.json({ success: false, error: '请先登录！' })
-    }
-
+    } 
     var userId = sess.userId  
     cond._id = ObjectID(userId)
     try {
@@ -156,16 +155,18 @@ var getlikes = async(req, res) => {
     } catch (err) {
         return res.json({success: false, error: err})
     }
-
+    // console.log(user)
     var likes = user.likes
     var Ids = []
     likes.map( i => {
         Ids.push(ObjectID(i))
     })
     cond._id = { $in: Ids}
+    console.log(Ids)
     try {
         var list = await Songs.find(cond).toArray()
     } catch (err) {
+
         return res.json({ success: false, error: err})
     }
     if (!list) {
@@ -242,6 +243,9 @@ var addSongTolikes = async(req, res) => {
     var userId = req.session.userId
     var songId = req.body['songId']
     cond._id = ObjectID(userId)
+    if (!songId) {
+        return res.json({ success: false, error: '缺少参数' })
+    }
     try {
         var user = await Users.findOne(cond)
     } catch (err) {
@@ -283,6 +287,9 @@ var addSonglistTolikes = async(req, res) => {
     var cond = {}
     var userId = req.session.userId
     var songlistId = req.body['songlistId']
+    if (!songlistId) {
+        return res.json({ success: false, error: '缺少参数' })
+    }
     cond._id = ObjectID(userId)
     try {
         var user = await Users.findOne(cond)

@@ -16,23 +16,39 @@ class RootPlayer extends Component {
                 currentTime: 0,
                 duration: 0
             },
-            index: 0
+            index: 0,
+            oId: ""
         }
         this.state = defaultState
     } 
 
     componentWillMount() { 
-        const { songs, getnextsongAction } = this.props 
-
+        let { song, songs, getnextsongAction } = this.props  
         var index = this.state.index 
-        var song = Array.from(songs)[index]  
-        getnextsongAction(song) 
+        var _song = songs[index]   
+        getnextsongAction(_song) 
     } 
+
+    componentWillUpdate() {
+        let { song } = this.props
+        let { audio, oId } = this.state
+        if (oId == "" || song._id != oId) {
+            oId = song._id  
+            audio.currentTime = 0 
+            audio.dom.currentTime = 0
+            audio.dom.autoplay = true  
+            this.setState({  
+                audio, 
+                oId,
+                progress: 0,
+            })
+        }
+    }
 
     componentDidMount() {
         var audio = this.refs.audio
         var audiostate = this.state.audio;
-        audiostate.dom = audio 
+        audiostate.dom = audio  
         this.setState({audio: audiostate})
 
     }
@@ -61,6 +77,7 @@ class RootPlayer extends Component {
         if (value == -1 && index == 0) {
             return false;
         }
+        if ( index == songs.length-1 ) return false
         index = index + value   
         audio.currentTime = 0 
         audio.dom.currentTime = 0

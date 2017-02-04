@@ -27,8 +27,7 @@ class RootPlayList extends Component {
 
     render() {   
         let { playlist } = this.props;
-        playlist = Array.from(playlist)
-        console.log(playlist)
+        playlist = Array.from(playlist) 
         return ( 
             <div className="play-list">
                 {
