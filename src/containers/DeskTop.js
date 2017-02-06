@@ -4,6 +4,8 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux'  
 import { Menu, Dropdown, Icon } from 'antd';
 import { autoLoginAction, loginAction ,autoLoginAjax} from '../Redux/actions.js'
+
+import { browserHistory } from 'react-router'
 class RootDeskTop extends Component {
     constructor(props) {
         super(props);
@@ -14,14 +16,12 @@ class RootDeskTop extends Component {
       autoLogin()
     }
 
-    render() {
-        if (this.props.params) {
-            var pid = this.props.params.pid 
-        }
+    render() { 
+        console.log(browserHistory)
         return (
             <div> 
               { this.props.children }
-            <Player />
+              <Player />
             </div>
       );
     }

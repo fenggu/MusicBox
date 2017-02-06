@@ -1,5 +1,13 @@
 var app = require('express').Router(); 
 var userController = require('./controllers/users.js');
+
+//bodyparser中间件 
+var bodyParser = require('body-parser') 
+var jsonParser = bodyParser.json();
+app.use(bodyParser());
+app.use(bodyParser.urlencoded({ extended: false }));
+
+
 app.post('/user/sign', userController.createUser)
 app.post('/user/login', userController.login)
 app.get('/user/autologin', userController.getSelf)
@@ -10,7 +18,12 @@ app.get('/user/likelist', userController.getPlaylist)
 app.get('/user/likesong', userController.getlikes)
 
 app.get('/songs/:id', userController.getsongs)
+app.post('/songs', userController.addsongs)
+app.delete('/songs/:id', userController.delsong)
+
 app.get('/songlist/:id', userController.getSonglist)
 app.get('/musiclists', userController.getMusiclist)
- 
+
+app.post('/uploadfile', userController.uploadfile)
+
 module.exports = app;

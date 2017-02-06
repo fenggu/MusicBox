@@ -66,8 +66,6 @@ class SongList extends Component {
             var str = JSON.stringify(localhistory)
             localStorage.history = str
         }
-
-
         changesong(song)
     }
 

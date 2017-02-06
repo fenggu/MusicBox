@@ -20,6 +20,7 @@ export const searchmusic = 'searchmusic'; //搜索音乐
 export const searchmusicname = 'searchmusicname'; //搜索框提示名字
 export const addsongs = 'addsongs'; //添加song到localstorge
 export const getallsongs = 'getallsongs';
+export const uploadsong = 'uploadsong'; //添加song到localstorge
 /*
  * action 创建函数
  */
@@ -180,6 +181,61 @@ export function getallsongActionClick (id) {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             }
+        }).then(function(response) {
+            return response.json()
+        }).then(function(json) {
+            if (!json.success) {
+                console.log(json.error)
+            } else {
+                dispatch(getsonglistAction(json.data))
+                console.log(json.data)
+            }
+        }).catch(function(err) {
+            console.log(err)
+        })
+    }
+}
+
+export function delallsongActionClick (id) {
+    return dispatch => {
+        return fetch('/v1/songs/' + id, {
+            method: 'delete',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+        }).then(function(response) {
+            console.log(response)
+            return response.json()
+        }).then(function(json) {
+            console.log(json)
+            if (!json.success) {
+                console.log(json.error)
+            } else {
+                dispatch(getsonglistAction(json.data))
+                console.log(json.data)
+            }
+        }).catch(function(err) {
+            console.log(err)
+        })
+    }
+}
+
+export function addsongActionClick (song) {
+    return dispatch => {
+        return fetch('/v1/songs/', {
+            method: 'post',
+            credentials: 'include', //配置cookie来获取session
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ 
+                title: song.title,
+                url: song.url,
+                author: song.author,
+                pic: song.pic
+            })
         }).then(function(response) {
             return response.json()
         }).then(function(json) {

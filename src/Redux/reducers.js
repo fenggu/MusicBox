@@ -1,6 +1,5 @@
 import { combineReducers } from 'redux'
 import * as actions from './actions'
-import { browserHistory } from 'react-router'
 // Reducer 
 function Reducer(state, action) {
     switch (action.type) {

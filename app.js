@@ -2,13 +2,11 @@ require('babel-register');
 require("babel-polyfill");
 
 var express = require('express');
-var app = express();
-//bodyparser中间件 
+var app = express(); 
 var session = require('express-session');
 var MongoStore = require('connect-mongo')(session);
 var MongoClient = require('mongodb').MongoClient;
-var cookieParser = require('cookie-parser');
-
+var cookieParser = require('cookie-parser'); 
 global.ObjectID = require('mongodb').ObjectID;
 
 
@@ -53,20 +51,6 @@ MongoClient.connect('mongodb://localhost:27017/' + dbn, function(err, instance) 
             url: 'mongodb://localhost:27017/music'
         })
     }));
-    // app.use(session({ //存储到session
-    //     secret: 'mymusic',
-    //     name: 'testapp',
-    //     cookie: { maxAge: 80000 },
-    //     resave: false,
-    //     saveUninitialized: true,
-    //     store: new MongoStore({ //创建新的mongodb数据库 
-    //         host: 'localhost',
-    //         port: '27017',
-    //         db: 'sessions',
-    //         url: 'mongodb://localhost:27017/music'
-    //     })
-    // }));
-
     // start http
     console.log('starting http...');
     var webapp = app.listen(8081, function() {
@@ -79,10 +63,6 @@ MongoClient.connect('mongodb://localhost:27017/' + dbn, function(err, instance) 
         app.use('*', (req, res) => {
                 res.sendFile(__dirname + '/build/index.html')
             })
-            // crontab.buildHospital()
-            // crontab.buildGradedAt()
-            // crontab.buildFollowUpAt()
-            // crontab.sendFollowUpVisitTask.start()
 
     });
 });

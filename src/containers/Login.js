@@ -20,14 +20,7 @@ class RootLogin extends Component {
         }
         this.state = defaultState
     }
-
-    onTextChange(key) {
-        return e => {
-            var user = this.state.user
-            user[key] = e.target.value
-            this.setState({ user })
-        }
-    }
+ 
 
     handleSubmit = e => {
         e.preventDefault();

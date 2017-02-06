@@ -21,8 +21,7 @@ class RootPlayList extends Component {
 
     componentWillMount() { 
         let { getplaylist } = this.props
-        getplaylist()
-        console.log(getplaylist())
+        getplaylist() 
     }
 
     render() {   
