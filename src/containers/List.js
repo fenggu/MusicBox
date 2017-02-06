@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router'; 
 import { getlistAction } from '../Redux/actions.js'
 import { bindActionCreators } from 'redux'
-import { getsonglistActionClick, getnextsongAction, addlikelistActionClick, getlikesActionClick, addsongsAction } from '../Redux/actions'
+import { getsonglistActionClick, getallsongActionClick, gethistoryAction, getnextsongAction, addlikelistActionClick, getlikesActionClick, addsongsAction } from '../Redux/actions'
 import { SongList, TopBar } from '../components'
 class RootList extends Component {
 
@@ -30,7 +30,7 @@ class RootList extends Component {
 
     isLikeList(id) {
         var { user } = this.props
-        if (this.state.id == "likes") return ""
+        if (this.state.id == "likes" || this.state.id == "all" || this.state.id == "history") return ""
         if (user.songlist == undefined) return "iconfont icon-weibiaoti1"
         if (user.songlist.indexOf(id) > -1) {
             return "iconfont icon-aixin"
@@ -40,13 +40,22 @@ class RootList extends Component {
     }
 
     componentWillMount() { 
-        const { getlist, getlikes } = this.props
+        const { getlist, getsongs, getlikes, gethistory, history } = this.props
         var id = this.state.id
         if (id == "likes") {
             getlikes()
-        } else {
-            getlist(id)  
+            return 
         }
+        if (id == 'history') {
+            var localhistory = JSON.parse(localStorage.history)
+            gethistory(localhistory)
+            return
+        } 
+        if(id == 'all') {
+            getsongs()
+            return
+        }
+        getlist(id)  
 
     }
 
@@ -77,7 +86,8 @@ function mapStateToProps(state) {
     return {  
         user: state.user,
         songlist: state.songlist,
-        songs: state.songs
+        songs: state.songs,
+        history: state.history
     }
 }
 
@@ -85,10 +95,13 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {   
     return bindActionCreators({   
         changesong: getnextsongAction,
+        gethistory: gethistoryAction,
+
         getlist: getsonglistActionClick,
         addlike: addlikelistActionClick,
         addsongs: addsongsAction,
-        getlikes: getlikesActionClick
+        getlikes: getlikesActionClick,
+        getsongs: getallsongActionClick
     }, dispatch)
 }
 

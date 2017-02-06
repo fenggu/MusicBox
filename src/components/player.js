@@ -11,6 +11,7 @@ class RootPlayer extends Component {
         this.bindFunc() 
         var defaultState = {
             progress: 0, 
+            type: 0,
             audio: {
                 dom:{},
                 currentTime: 0,
@@ -31,9 +32,9 @@ class RootPlayer extends Component {
 
     componentWillUpdate() {
         let { song } = this.props
-        let { audio, oId } = this.state
+        let { audio, oId, progress } = this.state
 
-        if (!song) return false
+        if (!song) return false 
         if (oId == "" || song._id != oId) {
             oId = song._id  
             audio.currentTime = 0 
@@ -56,7 +57,7 @@ class RootPlayer extends Component {
     }
 
     bindFunc() {
-        this.bindFuncNames = ['getTime', 'onPlay', 'getProgress', 'toLittle', 'audioSeek', 'next']
+        this.bindFuncNames = ['getTime', 'onPlay', 'getProgress', 'toLittle', 'audioSeek', 'next', 'changePlay']
         this.bindFuncs = {}
         this.bindFuncNames.forEach( funcName => {
           this.bindFuncs[funcName] = this[funcName].bind(this)
@@ -73,40 +74,88 @@ class RootPlayer extends Component {
         this.setState(audio)
     }
 
-    next(value){
+    next = value => {
         var { songs, getnextsongAction, addsongs} = this.props
-        var { index, audio } = this.state
-        if (value == -1 && index == 0) {
-            return false;
-        }
-        console.log(index)
-        if ( value == 1 &&index == songs.list.length-1 ) return false
-        index = index + value   
-
+        var { index, audio, type } = this.state 
         audio.currentTime = 0 
         audio.dom.currentTime = 0
         audio.dom.autoplay = true
+
+        if (type == 0) { //顺序播放
+            if (value == -1 && index == 0) {
+                return false;
+            }
+            if ( value == 1 &&index == songs.list.length-1 ) { 
+                index = -1 
+            }
+            index = index + value   
+        }
+
+        if (type == 1){ //随机播放  
+            index = this.getRandomIndex(index, songs.list.length) 
+        }
+
+        if (type == 2) { 
+            this.setState({  
+                audio, 
+                progress: 0
+            })
+        }
         var song = songs.list[index] 
         getnextsongAction(song)
 
-        var Ids = []
-        var locallist = JSON.parse(localStorage.songs)
-        locallist.list.map( s => {
-            Ids.push(s._id)
-        }) 
-        if (Ids.indexOf(song._id) <= -1) {
-            songs.list.push(song)
-            addsongs(songs)
-            var str = JSON.stringify(songs); 
-            localStorage.songs = str 
-        }
+
+        //存储缓存逻辑
+        this.setlocalStorage(song)
+
         this.setState({ 
             index, 
             audio, 
             progress: 0
         })
     }
-
+    getRandomIndex = (i, n) => {
+        let index = Math.floor(Math.random() * n )
+        if (index == i) { 
+            return this.getRandomIndex(index, n)
+        } else {   
+            return index
+        }
+    }
+    setlocalStorage(song) {
+        var { songs } = this.props
+        var Ids = []
+        var Hids = []
+        var locallist = JSON.parse(localStorage.songs)
+        var localhistory = JSON.parse(localStorage.history)
+        locallist.list.map( s => {
+            Ids.push(s._id)
+        })  
+        if (Ids.indexOf(song._id) <= -1) {
+            songs.list.push(song)
+            addsongs(songs)
+            var str = JSON.stringify(songs); 
+            localStorage.songs = str 
+        }
+        localhistory.list.map( s => {
+            Hids.push(s._id)
+        })
+        var h = Hids.indexOf(song._id) 
+        if (h <= -1) {
+            localhistory.list.unshift(song)
+            localhistory.title = "播放历史"
+            localhistory.pic = 'http://localhost:8081/public/mdl.png'
+            var str = JSON.stringify(localhistory); 
+            localStorage.history = str 
+        } else {
+            localhistory.list.splice(h, 1)
+            localhistory.list.unshift(song)
+            localhistory.title = "播放历史"
+            localhistory.pic = 'http://localhost:8081/public/mdl.png'
+            var str = JSON.stringify(localhistory); 
+            localStorage.history = str 
+        } 
+    }
     onPlay(){ //播放
         var audio = this.state.audio; 
         if (audio.dom.paused) { 
@@ -133,6 +182,10 @@ class RootPlayer extends Component {
         audio.currentTime = e.target.currentTime
         audio.duration = e.target.duration
         var progress = e.target.currentTime / e.target.duration
+
+        if (progress == 1) {
+            this.next (1)
+        }
         progress = progress * 50 +'%'; 
         this.setState({progress, audio}) 
     }
@@ -150,15 +203,34 @@ class RootPlayer extends Component {
     toLittle(content) { //缩短字体
         var newcontent = ""
         if (content == undefined) return
-        if (content.length > 200) {
-            newcontent = content.slice(0, 200) + "..."
+        if (content.length > 15) {
+            newcontent = content.slice(0, 15) + "..."
         } else {
             newcontent = content;
         } 
         return newcontent
     }
 
-    render() {    
+    changePlay () {
+        var type = this.state.type
+        type = type + 1
+        type == 3 ? type = 0: ""
+        this.setState({type})
+    }
+    /* render */
+    getMenu () {
+        var type = this.state.type
+        if (type == 0) {
+            return (  <i className="iconfont icon-shunxubofang"></i> )
+        }
+        if(type == 1) {
+            return ( <i className="iconfont icon-suiji2"></i> )
+        }
+        if(type == 2) {
+            return (<i className="iconfont icon-ttpodicon"></i>)
+        }
+    }
+     render() {    
         let { audio } = this.state 
         let { song, addlikesong } = this.props 
         var paused = audio.dom.paused
@@ -173,12 +245,10 @@ class RootPlayer extends Component {
                     <i className={paused ? "iconfont icon-iconfont67 hidden": "iconfont icon-iconfont67"}  onClick={this.bindFuncs.onPlay.bind(this)}></i> 
                     <i className="iconfont icon-xiayishou" onClick={this.bindFuncs.next.bind(this,1)}></i>
                 </div>
-                <div className="player-type">
-                    <i className="iconfont icon-shunxubofang"></i>
-                    <i className="iconfont icon-suiji2"></i>
-                    <i className="iconfont icon-ttpodicon"></i>
+                <div className="player-type" onClick={this.bindFuncs.changePlay.bind(this)}>
+                    {this.getMenu()}
                 </div>
-                <p>{song ? song.title: ""}
+                <p>{song ? this.bindFuncs.toLittle(song.title): ""}
                     <i className={this.isLikeSong(song ? song._id: "")} onClick={addlikesong.bind(this, song? song._id : "")}></i> 
                 </p>  
                 <div className="ant-progress-line">

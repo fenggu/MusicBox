@@ -22,7 +22,11 @@ function Reducer(state, action) {
             return Object.assign({}, state, { playlist: action.list })
 
         case actions.addsongs: 
-            return Object.assign({}, state, { songs: action.songs})        
+            return Object.assign({}, state, { songs: action.songs })  
+
+        case actions.gethistory: 
+            return Object.assign({}, state, { songlist: action.list })   
+                   
         default:
             return state
     }

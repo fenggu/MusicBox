@@ -10,18 +10,22 @@ class RootMineBtn extends Component {
         return ( 
             <div className="mine-btn">
                 <div>
-                    <i>icon</i>
-                    <p>All</p>
-                </div>
-                <div>
-                    <Link to="/list/likes">
-                        <i>icon</i>
-                        <p>MyLike</p>
+                    <Link to="/list/all"> 
+                        <i className="icon-yinle iconfont"></i>
+                        <p>全部音乐</p>
                     </Link>
                 </div>
                 <div>
-                    <i>icon</i>
-                    <p>nearly</p>
+                    <Link to="/list/likes">
+                        <i className="iconfont icon-shoucang"></i>
+                        <p>我的收藏</p>
+                    </Link>
+                </div>
+                <div>
+                    <Link to="/list/history">
+                        <i className="iconfont icon-shijian"></i>
+                        <p>播放历史</p>
+                    </Link>
                 </div>
             </div>
         )

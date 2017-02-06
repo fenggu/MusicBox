@@ -10,8 +10,8 @@ class SongList extends Component {
     toLittle(content) { //缩短字体
         var newcontent = ""
         if (content == undefined) return
-        if (content.length > 200) {
-            newcontent = content.slice(0, 200) + "..."
+        if (content.length > 20) {
+            newcontent = content.slice(0, 20) + "..."
         } else {
             newcontent = content;
         } 
@@ -24,7 +24,10 @@ class SongList extends Component {
     onChangeSong(song) {
         var { changesong, songs, addsongs } = this.props
         var Ids = []
+        var Hids = []
         var locallist = JSON.parse(localStorage.songs)
+        var localhistory = JSON.parse(localStorage.history)
+
         locallist.list.map( s => {
             Ids.push(s._id)
         })
@@ -36,6 +39,35 @@ class SongList extends Component {
             var str = JSON.stringify(songs); 
             localStorage.songs = str
         }
+
+
+
+        if (Ids.indexOf(song._id) <= -1) {
+            songs.list.push(song)
+            addsongs(songs)
+            var str = JSON.stringify(songs); 
+            localStorage.songs = str 
+        }
+        localhistory.list.map( s => {
+            Hids.push(s._id)
+        })
+        var h = Hids.indexOf(song._id) 
+        if (h <= -1) {
+            localhistory.list.unshift(song)
+            localhistory.title = "播放历史"
+            localhistory.pic = 'http://localhost:8081/public/mdl.png'
+            var str = JSON.stringify(localhistory)
+            localStorage.history = str
+        } else {
+            localhistory.list.splice(h, 1)
+            localhistory.list.unshift(song)
+            localhistory.title = "播放历史"
+            localhistory.pic = 'http://localhost:8081/public/mdl.png'
+            var str = JSON.stringify(localhistory)
+            localStorage.history = str
+        }
+
+
         changesong(song)
     }
 
@@ -46,7 +78,7 @@ class SongList extends Component {
                 {
                     songlist.map((song, index) =>   
                         <div key={index} onClick={ this.onChangeSong.bind(this, song) }> 
-                            <p> <small>{index + 1}</small>{song.title} <span>{song.author}</span></p>
+                            <p> <small>{index + 1}</small>{this.toLittle(song.title)} <span>{song.author}</span></p>
                         </div> 
                     )
                 }

@@ -32,6 +32,11 @@ var initState = {
   },
   musiclist: {
     list: []
+  },
+  history: {
+    title:"播放历史",
+    list: [],
+    pic: 'http://localhost:8081/public/mdl.png'
   }
 }    
 if (!localStorage.songs) {
@@ -39,6 +44,13 @@ if (!localStorage.songs) {
 } else {
   initState.songs = JSON.parse(localStorage.songs)
 }
+
+if (!localStorage.history) {
+  localStorage.history = JSON.stringify(initState.history)
+} else {
+  initState.history = JSON.parse(localStorage.history)
+}
+
 const logger = createLogger() 
 const createStoreWithMiddleware = applyMiddleware(
   thunk, 

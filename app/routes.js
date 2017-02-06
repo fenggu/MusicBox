@@ -9,6 +9,7 @@ app.post('/user/likelist', userController.addSonglistTolikes)
 app.get('/user/likelist', userController.getPlaylist)
 app.get('/user/likesong', userController.getlikes)
 
+app.get('/songs/:id', userController.getsongs)
 app.get('/songlist/:id', userController.getSonglist)
 app.get('/musiclists', userController.getMusiclist)
  

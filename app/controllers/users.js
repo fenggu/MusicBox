@@ -98,12 +98,31 @@ var getSelf = async(req, res) => {
     return res.json({ success: true, data: userRet })
 }
 
-//获取播放列表本地 ***播放列表的接口线不做了吧 改成缓存 
+//获取全部音乐或者指定音乐
 var getsongs = async(req, res) => {
-    var sess = req.session;
-    if (!sess.loggedIn) {
-        return res.json({ success: false, error: '请先登录, 暂无播放列表' })
+    // var sess = req.session;
+    // if (!sess.loggedIn) {
+    //     return res.json({ success: false, error: '请先登录, 暂无播放列表' })
+    // }
+    var cond = {}
+    if (req.params.name) {
+        cond.name = req.params.name 
     }
+    try {
+        var songs = await Songs.find(cond).toArray()
+    } catch (err) {
+        return res.json({ success: false, error: err })
+    }
+    if (!songs) {
+        return res.json({ success: false,  error: '列表为空'})
+    }
+
+    var data = {}
+    data.title = '全部音乐'  
+    data.id = 'likes'  
+    data.list = songs
+    data.pic = 'http://localhost:8081/public/mdl.png'
+    return res.json({ success: true, data: data })
 }
 /* 获取我的歌单列表 一个歌单一个对象
     eg: playlist : {
@@ -176,6 +195,7 @@ var getlikes = async(req, res) => {
     data.list = list
     data.title = '我的收藏' 
     data.id = 'likes' 
+    data.pic = 'http://localhost:8081/public/mdl.png'
     return res.json({ success: true, data: data})
 }
 /* 获取歌单 通过songlist的id来查找 songs并且返回
@@ -355,6 +375,7 @@ module.exports = {
     login,
     logout,
     getSelf,
+    getsongs,
     addSongTolikes,
     addSonglistTolikes,
     getMusiclist,

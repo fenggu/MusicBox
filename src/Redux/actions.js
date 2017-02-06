@@ -19,10 +19,13 @@ export const getmusiclist = 'getmusiclist'; //获取音乐馆列表
 export const searchmusic = 'searchmusic'; //搜索音乐 
 export const searchmusicname = 'searchmusicname'; //搜索框提示名字
 export const addsongs = 'addsongs'; //添加song到localstorge
-
+export const getallsongs = 'getallsongs';
 /*
  * action 创建函数
  */
+export function gethistoryAction(list) {
+    return { type: gethistory, list: list}
+}
 
 export function getnextsongAction(song) {
     return { type: next, song: song }
@@ -148,6 +151,30 @@ function getsonglistAction(list) {
 export function getsonglistActionClick (id) {
     return dispatch => {
         return fetch('/v1/songlist/' + id, {
+            method: 'get',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        }).then(function(response) {
+            return response.json()
+        }).then(function(json) {
+            if (!json.success) {
+                console.log(json.error)
+            } else {
+                dispatch(getsonglistAction(json.data))
+                console.log(json.data)
+            }
+        }).catch(function(err) {
+            console.log(err)
+        })
+    }
+}
+
+
+export function getallsongActionClick (id) {
+    return dispatch => {
+        return fetch('/v1/songs/' + id, {
             method: 'get',
             headers: {
                 'Accept': 'application/json',
