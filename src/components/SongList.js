@@ -32,15 +32,6 @@ class SongList extends Component {
             Ids.push(s._id)
         })
 
-        if (Ids.indexOf(song._id) <= -1) {
-            console.log(songs)
-            songs.list.push(song)
-            addsongs(songs)
-            var str = JSON.stringify(songs); 
-            localStorage.songs = str
-        }
-
-
 
         if (Ids.indexOf(song._id) <= -1) {
             songs.list.push(song)

@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router'; 
 import { getlistAction } from '../Redux/actions.js'
 import { bindActionCreators } from 'redux'
-import { getsonglistActionClick, getallsongActionClick, gethistoryAction, getnextsongAction, addlikelistActionClick, getlikesActionClick, addsongsAction } from '../Redux/actions'
+import { getsonglistAction, getsonglistActionClick, getallsongActionClick, gethistoryAction, getnextsongAction, addlikelistActionClick, getlikesActionClick, addsongsAction } from '../Redux/actions'
 import { SongList, TopBar } from '../components'
 class RootList extends Component {
 
@@ -30,7 +30,7 @@ class RootList extends Component {
 
     isLikeList(id) {
         var { user } = this.props
-        if (this.state.id == "likes" || this.state.id == "all" || this.state.id == "history") return ""
+        if (this.state.id == "likes" || this.state.id == "all" || this.state.id == "history" || this.state.id == 'songs') return ""
         if (user.songlist == undefined) return "iconfont icon-weibiaoti1"
         if (user.songlist.indexOf(id) > -1) {
             return "iconfont icon-aixin"
@@ -40,7 +40,7 @@ class RootList extends Component {
     }
 
     componentWillMount() { 
-        const { getlist, getsongs, getlikes, gethistory, history } = this.props
+        const { getlist, getthissongs, getsongs, getlikes, gethistory, history, songs } = this.props
         var id = this.state.id
         if (id == "likes") {
             getlikes()
@@ -51,9 +51,20 @@ class RootList extends Component {
             gethistory(localhistory)
             return
         } 
-        if(id == 'all') {
+        if (id == 'all') {
             getsongs()
             return
+        }
+        if (id == 'songs') {
+            songs.title = '正在播放' 
+            songs.pic = "http://localhost:8081/public/upload/upload_b5ff438ee5fb50bcb3b5d9c8c92d5e65.png"
+            getthissongs(songs)
+        }
+        if (id.indexOf('search') > -1) {
+            var n = id.indexOf('search')
+            var value = id.slice(6)
+            getsongs(value) 
+            return 
         }
         getlist(id)  
 
@@ -96,7 +107,7 @@ function mapDispatchToProps(dispatch) {
     return bindActionCreators({   
         changesong: getnextsongAction,
         gethistory: gethistoryAction,
-
+        getthissongs: getsonglistAction,
         getlist: getsonglistActionClick,
         addlike: addlikelistActionClick,
         addsongs: addsongsAction,

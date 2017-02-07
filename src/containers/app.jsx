@@ -42,6 +42,7 @@ var initState = {
 if (!localStorage.songs) {
   localStorage.songs = JSON.stringify(initState.songs)
 } else {
+  console.log(JSON.parse(localStorage.songs))
   initState.songs = JSON.parse(localStorage.songs)
 }
 
@@ -54,7 +55,7 @@ if (!localStorage.history) {
 const logger = createLogger() 
 const createStoreWithMiddleware = applyMiddleware(
   thunk, 
-  logger
+  // logger
 )(createStore);
 
 let store = createStoreWithMiddleware(reducer,initState);

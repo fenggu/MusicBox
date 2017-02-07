@@ -1,8 +1,8 @@
 import React, { Component } from 'react'; 
-import { MineBtn, TopBtn, PlayList } from '../components' 
+import { MineBtn, TopBtn, PlayList, SearchInput } from '../components' 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux'  
-import { LogoutAction } from '../Redux/actions'
+import { LogoutAction, getallsongActionClick } from '../Redux/actions'
 import { Menu, Dropdown, Icon, Input } from 'antd'; 
 const Search = Input.Search;
 
@@ -15,11 +15,14 @@ class RootHome extends Component {
     }
 
     render() {
-        const { user, logout } = this.props
-         
+        const { user, logout, getsongs } = this.props
+
         return ( 
           <div>
             <TopBtn logout={logout} user={user}/> 
+            <div style={{'textAlign':'center'}}>
+              <SearchInput placeholder="搜索歌曲"/>
+            </div>
           	<MineBtn />
             <div> 
               <h3 className="list-title">
@@ -40,7 +43,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return bindActionCreators({  
-      logout: LogoutAction 
+      logout: LogoutAction
     }, dispatch)
 }
 

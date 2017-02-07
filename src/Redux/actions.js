@@ -170,7 +170,7 @@ export function getmusiclistActionClick() {
     }
 }
 
-function getsonglistAction(list) {
+export function getsonglistAction(list) { 
     return { type: getsonglist, list: list }
 }
 
@@ -198,9 +198,9 @@ export function getsonglistActionClick (id) {
 }
 
 
-export function getallsongActionClick (id) {
+export function getallsongActionClick (name) {
     return dispatch => {
-        return fetch('/v1/songs/' + id, {
+        return fetch('/v1/songs/' + name, {
             method: 'get',
             headers: {
                 'Accept': 'application/json',

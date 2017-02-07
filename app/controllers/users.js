@@ -105,8 +105,14 @@ var getsongs = async(req, res) => {
     //     return res.json({ success: false, error: '请先登录, 暂无播放列表' })
     // }
     var cond = {}
-    if (req.params.name) {
-        cond.name = req.params.name
+    var data = {}
+    data.title = '全部音乐'
+    data.id = 'all'
+    console.log(req.params)
+    if (req.params.name && req.params.name != 'undefined') {
+        data.title = '搜索结果'
+        data.id = 'search'
+        cond['title'] = { $regex: new RegExp(req.params.name), $options: 'i' }
     }
     try {
         var songs = await Songs.find(cond).toArray()
@@ -117,9 +123,6 @@ var getsongs = async(req, res) => {
         return res.json({ success: false, error: '列表为空' })
     }
 
-    var data = {}
-    data.title = '全部音乐'
-    data.id = 'all'
     data.list = songs
     data.pic = 'http://localhost:8081/public/mdl.png'
     return res.json({ success: true, data: data })
@@ -131,14 +134,14 @@ var getsongsOnlyNames = async(req, res) => {
     //     return res.json({ success: false, error: '请先登录, 暂无播放列表' })
     // }
     var cond = {}
-    if (req.body.name) { 
-        cond['title'] = { $regex: new RegExp(req.params.name), $options: 'i' }
-    } 
-    if (req.body.name == ' ') {
-        cond = {}
+    if (req.body.name) {
+        cond['title'] = { $regex: new RegExp(req.body.name), $options: 'i' }
     }
+    // if (req.body.name == '') {
+    //     cond = {}
+    // }
     var sort = { 'title': 1 }
-     
+
     try {
         var songs = await Songs.find(cond, { _id: 1, title: 1 }).sort(sort).toArray()
         console.log(songs)
@@ -149,8 +152,8 @@ var getsongsOnlyNames = async(req, res) => {
         return res.json({ success: false, error: '列表为空' })
     }
 
-    var data = {} 
-    data.list = songs 
+    var data = {}
+    data.list = songs
     return res.json({ success: true, data: data })
 }
 
@@ -192,7 +195,7 @@ var delsong = async(req, res) => {
 }
 
 var addsongs = async(req, res) => {
-        var sess = req.session; 
+        var sess = req.session;
         var cond = {}
         console.log(req.body)
         var title = req.body['title'];
@@ -313,45 +316,45 @@ var getlikes = async(req, res) => {
         ]
     */
 var getSonglist = async(req, res) => {
-        var cond = {}
-        var params = req.params
+    var cond = {}
+    var params = req.params
 
-        if (params.id == "undefined") {
-            return res.json({ success: false, error: '歌单请求错误！' })
-        }
-        cond._id = ObjectID(params.id)
-        try {
-            var songlist = await Songlists.findOne(cond)
-        } catch (err) {
-            return res.json({ success: false, error: err })
-        }
-        if (!songlist) {
-            return res.json({ success: false, error: '找不到该歌单' })
-        }
-        songlist.songs.map((s, index) => {
-            songlist.songs[index] = ObjectID(s)
-        })
-        cond._id = { $in: songlist.songs }
-
-        try {
-            var songs = await Songs.find(cond).toArray()
-        } catch (err) {
-            return res.json({ success: false, error: err })
-        }
-        var data = {}
-        data.title = songlist.title
-        data.id = songlist._id
-        data.pic = 'http://localhost:8081/' + songlist.pic
-        data.list = songs
-        res.json({ success: true, data: data })
+    if (params.id == "undefined") {
+        return res.json({ success: false, error: '歌单请求错误！' })
     }
-var delSonglist = async (req, res) => {
+    cond._id = ObjectID(params.id)
+    try {
+        var songlist = await Songlists.findOne(cond)
+    } catch (err) {
+        return res.json({ success: false, error: err })
+    }
+    if (!songlist) {
+        return res.json({ success: false, error: '找不到该歌单' })
+    }
+    songlist.songs.map((s, index) => {
+        songlist.songs[index] = ObjectID(s)
+    })
+    cond._id = { $in: songlist.songs }
+
+    try {
+        var songs = await Songs.find(cond).toArray()
+    } catch (err) {
+        return res.json({ success: false, error: err })
+    }
+    var data = {}
+    data.title = songlist.title
+    data.id = songlist._id
+    data.pic = 'http://localhost:8081/' + songlist.pic
+    data.list = songs
+    res.json({ success: true, data: data })
+}
+var delSonglist = async(req, res) => {
 
     var cond = {}
     if (req.body.songlistId) {
         cond._id = ObjectID(req.body.songlistId)
     } else {
-        res.json({ success: false, error: '缺少参数'})
+        res.json({ success: false, error: '缺少参数' })
     }
 
     try {
@@ -359,101 +362,101 @@ var delSonglist = async (req, res) => {
     } catch (err) {
         console.log(err)
         return res.json({ success: false, error: err })
-    } 
+    }
     return res.json({ success: true, data: req.body.songlistId })
 }
-var createSonglist = async(req, res)=> { 
-        var title = req.body['title'];
-        var songs = []
-        var pic = req.body['pic']
+var createSonglist = async(req, res) => {
+    var title = req.body['title'];
+    var songs = []
+    var pic = req.body['pic']
 
-        var data = {
-            title: title,
-            songs: [],
-            pic: pic, 
-        };
-        try {
-            var userCheck = await Songlists.findOne({ 'title': title })
-        } catch (err) {
-            return res.json({ success: false, error: err })
-        }
-        if (userCheck) {
-            return res.json({ success: false, error: '歌单已存在！' });
-        }
-        try {
-            await Songlists.insert(data)
-        } catch (err) {
-            console.error(err)
-            return res.json({ success: false, error: '创建失败：' + err })
-        }
-        res.json({ success: true, data: { _id: [data._id] } });
+    var data = {
+        title: title,
+        songs: [],
+        pic: pic,
+    };
+    try {
+        var userCheck = await Songlists.findOne({ 'title': title })
+    } catch (err) {
+        return res.json({ success: false, error: err })
+    }
+    if (userCheck) {
+        return res.json({ success: false, error: '歌单已存在！' });
+    }
+    try {
+        await Songlists.insert(data)
+    } catch (err) {
+        console.error(err)
+        return res.json({ success: false, error: '创建失败：' + err })
+    }
+    res.json({ success: true, data: { _id: [data._id] } });
 }
 var addsongsToSonglist = async(req, res) => {
-        var cond = {}
-        var body = req.body 
-        var songlistId = req.body.songlistId
-        var songId = req.body.songId
-        if (!songId || !songlistId) {
-            return res.json({ success: false, error: '缺少参数'})
-        }
-        cond._id = ObjectID(songlistId)
+    var cond = {}
+    var body = req.body
+    var songlistId = req.body.songlistId
+    var songId = req.body.songId
+    if (!songId || !songlistId) {
+        return res.json({ success: false, error: '缺少参数' })
+    }
+    cond._id = ObjectID(songlistId)
         // console.log(cond)
-        try {
-            var songlist = await Songlists.findOne(cond)
-        } catch (err) {
-            return res.json({ success: false, error: err })
-        }
-        if (songlist == null) {
-            return res.json({ success: false, error: '找不到该歌单' })
-        }
-        if (songlist.songs.indexOf(songId) <= -1) {
-            songlist.songs.unshift(songId)
-        }
-        
-        try {
-            await Songlists.save(songlist)
-        } catch (err) {
-            return res.json({ success: false, error: err })
-        }
- 
-        var data = {} 
-        res.json({ success: true, data: songId })
+    try {
+        var songlist = await Songlists.findOne(cond)
+    } catch (err) {
+        return res.json({ success: false, error: err })
+    }
+    if (songlist == null) {
+        return res.json({ success: false, error: '找不到该歌单' })
+    }
+    if (songlist.songs.indexOf(songId) <= -1) {
+        songlist.songs.unshift(songId)
     }
 
-var delsongsToSonglist = async(req, res) => {
-        var cond = {}
-        var body = req.body
-        console.log(body)
-        var songlistId = req.body.songlistId
-        var songId = req.body.songId
-        cond._id = ObjectID(songlistId)
-        // console.log(cond)
-        try {
-            var songlist = await Songlists.findOne(cond)
-        } catch (err) {
-            return res.json({ success: false, error: err })
-        }
-        if (songlist == null) {
-            return res.json({ success: false, error: '找不到该歌单' })
-        }
-        var n =  songlist.songs.indexOf(songId)
-        if (n > -1) {
-            songlist.songs.splice(n, 1)
-        }
-        
-        try {
-            await Songlists.save(songlist)
-        } catch (err) {
-            return res.json({ success: false, error: err })
-        }
- 
-        var data = {} 
-        res.json({ success: true, data: songId })
+    try {
+        await Songlists.save(songlist)
+    } catch (err) {
+        return res.json({ success: false, error: err })
     }
-    
-    /*
-        musiclist 音乐馆 获取所有歌单 
-    */
+
+    var data = {}
+    res.json({ success: true, data: songId })
+}
+
+var delsongsToSonglist = async(req, res) => {
+    var cond = {}
+    var body = req.body
+    console.log(body)
+    var songlistId = req.body.songlistId
+    var songId = req.body.songId
+    cond._id = ObjectID(songlistId)
+        // console.log(cond)
+    try {
+        var songlist = await Songlists.findOne(cond)
+    } catch (err) {
+        return res.json({ success: false, error: err })
+    }
+    if (songlist == null) {
+        return res.json({ success: false, error: '找不到该歌单' })
+    }
+    var n = songlist.songs.indexOf(songId)
+    if (n > -1) {
+        songlist.songs.splice(n, 1)
+    }
+
+    try {
+        await Songlists.save(songlist)
+    } catch (err) {
+        return res.json({ success: false, error: err })
+    }
+
+    var data = {}
+    res.json({ success: true, data: songId })
+}
+
+/*
+    musiclist 音乐馆 获取所有歌单 
+*/
 var getMusiclist = async(req, res) => {
     var cond = {}
     try {

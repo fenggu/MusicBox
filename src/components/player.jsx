@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Link } from 'react-router'; 
+import { Link, browserHistory } from 'react-router'; 
 import { Progress } from 'antd'
-import { getnextsongAction, addlikesongActionClick, addsongsAction } from '../Redux/actions.js'
+import { getnextsongAction, addlikesongActionClick, addsongsAction, getsonglistAction } from '../Redux/actions.js'
 import { bindActionCreators } from 'redux'
 import _ from 'lodash'
 class RootPlayer extends Component {
@@ -83,7 +83,7 @@ class RootPlayer extends Component {
 
         if (type == 0) { //顺序播放
             if (value == -1 && index == 0) {
-                return false;
+                index = songs.list.length
             }
             if ( value == 1 &&index == songs.list.length-1 ) { 
                 index = -1 
@@ -244,6 +244,8 @@ class RootPlayer extends Component {
                     <i className={!paused ? "iconfont icon-bofang1 hidden": "iconfont icon-bofang1"} onClick={this.bindFuncs.onPlay.bind(this)}></i>
                     <i className={paused ? "iconfont icon-iconfont67 hidden": "iconfont icon-iconfont67"}  onClick={this.bindFuncs.onPlay.bind(this)}></i> 
                     <i className="iconfont icon-xiayishou" onClick={this.bindFuncs.next.bind(this,1)}></i>
+
+                    <i className="iconfont icon-suoyoukeshi" onClick={ (e => {browserHistory.push('/list/songs')}).bind(this)}></i>
                 </div>
                 <div className="player-type" onClick={this.bindFuncs.changePlay.bind(this)}>
                     {this.getMenu()}

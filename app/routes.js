@@ -18,7 +18,7 @@ app.post('/user/likelist', userController.addSonglistTolikes)
 app.get('/user/likelist', userController.getPlaylist)
 app.get('/user/likesong', userController.getlikes)
 app.post('/songtitles', userController.getsongsOnlyNames)
-app.get('/songs/:id', userController.getsongs)
+app.get('/songs/:name', userController.getsongs)
 app.post('/songs', userController.addsongs)
 app.delete('/songs/:id', userController.delsong)
 
