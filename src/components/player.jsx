@@ -171,7 +171,7 @@ class RootPlayer extends Component {
         data = new Date(data); 
         var min = data.getMinutes()
         var sec = data.getSeconds()
-        sec > 10 ? sec : sec = '0' + sec 
+        sec > 9 ? sec : sec = '0' + sec 
         var time = min + '：' + sec
         return time
     }
