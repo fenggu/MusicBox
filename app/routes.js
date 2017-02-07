@@ -10,6 +10,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 app.post('/user/sign', userController.createUser)
 app.post('/user/login', userController.login)
+app.get('/user/logout', userController.logout)
 app.get('/user/autologin', userController.getSelf)
 
 app.post('/user/likesong', userController.addSongTolikes)

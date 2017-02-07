@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { MineBtn, TopBtn, PlayList } from '../components' 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux'  
+import { LogoutAction } from '../Redux/actions'
 import { Menu, Dropdown, Icon, Input } from 'antd'; 
 const Search = Input.Search;
 
@@ -14,13 +15,11 @@ class RootHome extends Component {
     }
 
     render() {
-        const { user } = this.props
+        const { user, logout } = this.props
+         
         return ( 
           <div>
-            <TopBtn user = {user}/>
-            <div className="input-search">
-              <Search />
-            </div>
+            <TopBtn logout={logout} user={user}/> 
           	<MineBtn />
             <div> 
               <h3 className="list-title">
@@ -40,7 +39,8 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-    return bindActionCreators({   
+    return bindActionCreators({  
+      logout: LogoutAction 
     }, dispatch)
 }
 

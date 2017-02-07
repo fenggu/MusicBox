@@ -7,14 +7,14 @@ import { autoLoginAction, loginAction ,autoLoginAjax} from '../Redux/actions.js'
 class TopBtn extends Component {
     constructor(props) {
         super(props); 
-    } 
- 
+    }   
     render() { 
-        let { user } = this.props
+        let { user, logout } = this.props
+
         const menu = (
           <Menu>
             <Menu.Item>
-              { user.loggedIn ?  <Link to="/login">退出登录</Link> : <Link to="/login">登录</Link>     
+              { user.loggedIn ?  <span onClick={logout.bind(this)}>退出登录</span> : <Link to="/login">登录</Link>     
               }
             </Menu.Item>
             <Menu.Item>

@@ -24,10 +24,7 @@ class RootMusicBox extends Component {
         console.log(musiclist)
         return ( 
           <div>
-            <TopBtn user = {user}/>
-            <div className="input-search">
-              <Search />
-            </div>
+            <TopBtn user = {user}/> 
             <div className="music-list">  
               {
                 musiclist.list.map( (s, index) => {

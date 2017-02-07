@@ -119,6 +119,31 @@ export function autoLoginAction() { //自动登录
     }
 }
 
+export function LogoutAction() { //退出登录
+    return dispatch => {
+        return fetch('/v1/user/logout', {
+            credentials: 'include', //配置cookie来获取session
+            method: 'get',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        }).then(function(response) {
+            return response.json()
+        }).then(function(json) {
+            if (json.success == false) {
+                console.log(json.error)
+            } else {
+                dispatch(getuser(json.data))  
+
+                window.location.reload();
+            }
+        }).catch(function(err) {
+            console.log(err)
+        });
+    }
+}
+
 function getmusiclistAction(list) {
     return { type: getmusiclist, list: list }
 }
