@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Router, Route, browserHistory, Link ,IndexRoute} from 'react-router';
-import { Home, List, DeskTop, Login, Sign, MusicBox, Admin } from './index.js' 
+import { Home, List, DeskTop, About, Login, Sign, MusicBox, Admin } from './index.js' 
 import { Provider, connect } from 'react-redux'; 
 import thunk from 'redux-thunk'
 import createLogger from 'redux-logger'
@@ -76,6 +76,7 @@ class App extends Component {
                 <Route path="/list/:id" component={ List }/>  
                 <Route path="/login" component={ Login }/>  
                 <Route path="/sign" component={ Sign }/>   
+                <Route path="/about" component={ About }/>   
               </Route> 
               <Route path="/admin" component={ Admin }>
                 
