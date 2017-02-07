@@ -107,7 +107,7 @@ class RootLogin extends Component {
 
         <FormItem> 
           <Button type="primary" htmlType="submit" className="login-form-button">
-            Log in
+            提交
           </Button>
         </FormItem>
       </Form>
