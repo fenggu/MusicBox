@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 
-import { Form, Icon, Input, Button, Upload, message, Checkbox } from 'antd';
+import { Form, Icon, Select, Input, Button, Upload, message, Checkbox } from 'antd';
 const FormItem = Form.Item;
+const Option = Select.Option;
 
 class RootLogin extends Component {
 
@@ -11,22 +12,38 @@ class RootLogin extends Component {
       url: "",
       title: "",
       author: "",
-      pic: ""
+      pic: "",
+      isList: 'song'
     }
     this.state = defaultState
   }
 
   handleSubmit(state) { 
-    var { uploadsong } = this.props
+    var { uploadsong, addsonglist } = this.props
+    var isList = this.state.isList
     this.props.form.validateFields((err, values) => {
       if (!err) {
         state.title = values.title;
         state.author = values.author
-        uploadsong(state)
+        if (isList == 'list') {
+          state.url = ""
+          addsonglist(state)
+        } 
+
+        if (isList == 'song') {
+          uploadsong(state) 
+        }
         console.log('Received values of form: ', state);
       }
     });
   }
+
+  onChangeSelect() { 
+    return e => {  
+      this.setState({isList: e})
+    }
+  }
+
   render() {
     var state = this.state
     const formItemLayout = {
@@ -61,56 +78,65 @@ class RootLogin extends Component {
       },
       defaultFileList: [],
     };
-    const { getFieldDecorator } = this.props.form;
+    const { getFieldDecorator } = this.props.form; 
+    var onChangeSelect = this.onChangeSelect().bind(this)
     return (
-      <Form onSubmit={this.handleSubmit.bind(this, state)} className="admin-form">
-        <FormItem 
-          {...formItemLayout}>
-          {getFieldDecorator('title', {
-            rules: [{ required: true, message: 'Please input your username!' }],
-          })(
-            <Input addonBefore={<Icon type="caret-right" />} placeholder="title" />
-          )}
-        </FormItem>
-        <FormItem
-          {...formItemLayout}>
-          {getFieldDecorator('author', {
-            rules: [{ required: true, message: 'Please input your Password!' }],
-          })(
-            <Input addonBefore={<Icon type="user" />} placeholder="author" />
-          )}
-        </FormItem>
+      <div>
+        <Select value={state.isList} onChange={onChangeSelect}>
+          <Option value='song'>歌曲</Option>
+          <Option value='list'>歌单</Option>
+        </Select>
 
-        <FormItem
-          {...formItemLayout}
-          label="上传音乐"
-          extra="上传音乐"
-        >
-          <Upload {...uploadSongprops}>
-            <Button>
-              <Icon type="upload" /> Upload
+        <Form onSubmit={this.handleSubmit.bind(this, state)} className="admin-form">
+          <FormItem 
+            {...formItemLayout}>
+            {getFieldDecorator('title', {
+              rules: [{ required: true, message: 'Please input your username!' }],
+            })(
+              <Input addonBefore={<Icon type="caret-right" />} placeholder="title" />
+            )}
+          </FormItem>
+          <FormItem
+            {...formItemLayout}>
+            {getFieldDecorator('author', {
+              rules: [{ required: true, message: 'Please input your Password!' }],
+            })(
+              <Input addonBefore={<Icon type="user" />} placeholder="author" />
+            )}
+          </FormItem>
+
+          <FormItem
+            {...formItemLayout}
+            label="上传音乐"
+            extra="上传音乐"  
+            className={state.isList=="list"? "hidden":""}
+          >
+            <Upload {...uploadSongprops}>
+              <Button>
+                <Icon type="upload" /> Upload
+              </Button>
+            </Upload>
+          </FormItem>
+
+          <FormItem
+            {...formItemLayout}
+            label="上传缩略图"
+            extra="上传缩略图"
+          >
+            <Upload {...uploadPicprops}>
+              <Button>
+                <Icon type="upload" /> Upload
+              </Button>
+            </Upload>
+          </FormItem>
+
+          <FormItem> 
+            <Button type="primary" htmlType="submit" className="login-form-button">
+              提交
             </Button>
-          </Upload>
-        </FormItem>
-
-        <FormItem
-          {...formItemLayout}
-          label="上传缩略图"
-          extra="上传缩略图"
-        >
-          <Upload {...uploadPicprops}>
-            <Button>
-              <Icon type="upload" /> Upload
-            </Button>
-          </Upload>
-        </FormItem>
-
-        <FormItem> 
-          <Button type="primary" htmlType="submit" className="login-form-button">
-            提交
-          </Button>
-        </FormItem>
-      </Form>
+          </FormItem>
+        </Form>
+      </div>
     );
   }
 }

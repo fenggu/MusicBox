@@ -2,20 +2,34 @@ import React, { Component } from 'react';
 import { AdminForm } from '../components' 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux'  
-import { addsongActionClick, delallsongActionClick, getmusiclistActionClick, getsonglistActionClick, getallsongActionClick, gethistoryAction, getnextsongAction, addlikelistActionClick, getlikesActionClick, addsongsAction } from '../Redux/actions'
-import { Menu, Dropdown, Icon, Input, Table, Button } from 'antd';
+import { 
+  delSongToListAction, 
+  addsongActionClick, 
+  addSongToListAction,  
+  delallsongActionClick, 
+  getmusiclistActionClick, 
+  getsonglistActionClick, 
+  getallsongActionClick,  
+  addsonglistActionClick, 
+  addsongsAction,
+  delsonglistActionClick
+} from '../Redux/actions'
+import { Menu, Dropdown, Select, Icon, Input, Table, Button } from 'antd';
 const SubMenu = Menu.SubMenu;
 const MenuItemGroup = Menu.ItemGroup;
+const Option = Select.Option;
 
-const Search = Input.Search;
-
+let timeout;
 
 class RootAdmin extends Component {
   constructor(props) {
     super(props);
 
     var defaultState = {
-      isEdit: false
+      isEdit: false, 
+      isList: false,
+      data: [],
+      value: ''
     }
     this.state = defaultState
   }
@@ -23,21 +37,82 @@ class RootAdmin extends Component {
   componentWillMount() {
     this.props.getmusiclist()
     this.props.getsongs()
+    this.getOptions()
   }  
 
   handleClick = e => {
     let { getlist, getsongs } = this.props
     if (e.key == "allsongs") {
       getsongs()
+      this.setState({isList: false})
       return
     }
-
+    this.setState({isEdit: false})
+    this.setState({isList: true,  songlistId: e.key})
     getlist(e.key) 
   }
   onNew = e => {
+    const { addsongtolist, getlist } = this.props
     var isEdit = this.state.isEdit
+    var isList = this.state.isList
+    if (isList) {
+      console.log(this.state)
+      var value = this.state.value 
+      var songlistId = this.state.songlistId
+      addsongtolist(value, songlistId)
+      // getlist(songlistId) 
+      return 
+    }
     this.setState({isEdit: !isEdit})
   }
+  onDelsonglist = e => {
+    const { delsonglist } = this.props
+    var isList = this.state.isList 
+    if(isList) {
+      var songlistId = this.state.songlistId 
+      delsonglist(songlistId)
+    }
+  }
+
+  setOptions = data => {
+    this.setState({data: data})
+  }
+
+  onChangeSelect() { 
+    return e => { 
+      this.setState({value: e})
+    }
+  }
+
+  getOptions() {
+    var callback = this.setOptions
+    if (timeout) {
+      clearTimeout(timeout);
+      timeout = null;
+    }
+    let self = this    
+    fetch('/v1/songtitles', {
+        method: 'post',
+        credentials: 'include', //配置cookie来获取session
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        }
+    }).then(function(response) {
+        return response.json()
+    }).then(function(json) {
+        if (!json.success) {
+          alert(json.error)
+        } else { 
+          return self.setState({data: json.data.list})
+          console.log(json.data)
+        }
+    }).catch(function(err) {
+        console.log(err)
+    })  
+  } 
+  
+
 
   renderMenu() {
     var { musiclist } = this.props
@@ -57,19 +132,31 @@ class RootAdmin extends Component {
               )
           })
         }
-      </SubMenu>
-      <SubMenu key="sub4" title={<span><Icon type="setting" /><span>用户</span></span>}>
-        <Menu.Item key="9">登录</Menu.Item>
-        <Menu.Item key="10">关于</Menu.Item> 
-      </SubMenu>
+      </SubMenu> 
     </Menu>
     );
 
   }
 
+  getSearchInput() {
+    const options = this.state.data.map(d => <Option value={d._id} key={d._id}>{d.title}</Option>);
+    return (
+        <Select className={this.state.isList? "": "hidden"}   value={this.state.value} onChange={this.onChangeSelect().bind(this)}>
+          {options}
+        </Select>
+      ) 
+  }
   render() {
-
-    var { musiclist, songlist, delsong, uploadsong } = this.props 
+    var {isList, songlistId} = this.state
+    var { musiclist, songlist, addsonglist, delsong, getlist, delsongtolist, uploadsong } = this.props 
+    function deletesong(songId) {
+      if (isList) {
+        delsongtolist(songId, songlistId)
+        // getlist(songlistId) 
+      } else {
+        delsong(songId)
+      }
+    }
     const columns = [{
       title: '歌曲名称',
       dataIndex: 'title',
@@ -91,7 +178,7 @@ class RootAdmin extends Component {
       title: 'Action',
       key: 'key',
       render: (key, record) => ( 
-        <span onClick={delsong.bind(this, record.key)}>  
+        <span onClick={deletesong.bind(this, record.key)}>  
             <a> 删除 </a>
         </span>
       ),
@@ -105,10 +192,13 @@ class RootAdmin extends Component {
           {this.renderMenu()}
         </div>
         <div className="admin-table">  
-          <Button onClick={this.onNew.bind(this)}>新增</Button>
+
+          {this.getSearchInput()}
+          <Button onClick={this.onNew.bind(this)}>新增</Button> 
+          <Button className={this.state.isList? "": "hidden"} onClick={this.onDelsonglist.bind(this)}>删除</Button> 
           <Table className={this.state.isEdit?"hidden":''} columns={columns} dataSource={songlist.list} />
           <div className="admin-form" className={this.state.isEdit?"":'hidden'}>
-            <AdminForm uploadsong={uploadsong}/>
+            <AdminForm isList={this.state.isList} addsonglist={addsonglist} uploadsong={uploadsong}/>
           </div>
         </div>
       </div>
@@ -127,16 +217,15 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({   
     getmusiclist: getmusiclistActionClick,
-    changesong: getnextsongAction,
-    gethistory: gethistoryAction,
-
-    getlist: getsonglistActionClick,
-    addlike: addlikelistActionClick,
-    addsongs: addsongsAction,
-    getlikes: getlikesActionClick,
+    addsongtolist: addSongToListAction,
+    delsongtolist: delSongToListAction,
+    getlist: getsonglistActionClick, 
+    addsongs: addsongsAction, 
     getsongs: getallsongActionClick,
     delsong: delallsongActionClick,
-    uploadsong: addsongActionClick
+    uploadsong: addsongActionClick,
+    addsonglist: addsonglistActionClick,
+    delsonglist: delsonglistActionClick
   }, dispatch)
 }
 

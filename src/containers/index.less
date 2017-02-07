@@ -189,7 +189,13 @@ html {
     }
 }
 .hidden {
-    display: none;
+    display: none!important
+}
+.admin-form {
+    .hidden {
+        display: none
+    }
+
 }
 .player {
     position: fixed;
@@ -295,6 +301,9 @@ html {
             text-align: center;
         }
     }
+}
+.ant-select {
+    width: 200px
 }
 .admin-menu {
     width: 20%;

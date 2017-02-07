@@ -251,6 +251,62 @@ export function addsongActionClick (song) {
     }
 }
 
+export function addsonglistActionClick (song) {
+    return dispatch => {
+        return fetch('/v1/songlist/', {
+            method: 'post',
+            credentials: 'include', //配置cookie来获取session
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ 
+                title: song.title, 
+                author: song.author,
+                pic: song.pic
+            })
+        }).then(function(response) {
+            return response.json()
+        }).then(function(json) {
+            if (!json.success) {
+                console.log(json.error)
+            } else {
+                dispatch(getmusiclistActionClick())
+                console.log(json.data)
+            }
+        }).catch(function(err) {
+            console.log(err)
+        })
+    }
+}
+
+export function delsonglistActionClick (songlistId) {
+    return dispatch => {
+        return fetch('/v1/songlist/', {
+            method: 'delete',
+            credentials: 'include', //配置cookie来获取session
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({  
+                songlistId: songlistId
+            })
+        }).then(function(response) {
+            return response.json()
+        }).then(function(json) {
+            if (!json.success) {
+                console.log(json.error)
+            } else {
+                dispatch(getmusiclistActionClick())
+                console.log(json.data)
+            }
+        }).catch(function(err) {
+            console.log(err)
+        })
+    }
+}
+
 export function addlikesongActionClick(id) { //添加收藏
     return dispatch => {
         return fetch('/v1/user/likesong', {
@@ -359,6 +415,62 @@ export function getlikesActionClick (id) {
     }
 }
 
-export function addsongsAction(songs) {
+export function addsongsAction(songs) { 
     return { type: addsongs, songs: songs}
+}
+
+
+export function addSongToListAction (songId, songlistId) {
+    return dispatch => {
+        return fetch('/v1/editsonglist', {
+            method: 'post',
+            credentials: 'include', //配置cookie来获取session
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ 
+                songId: songId,
+                songlistId: songlistId 
+            })
+        }).then(function(response) {
+            return response.json()
+        }).then(function(json) {
+            if (!json.success) {
+                console.log(json.error)
+            } else { 
+                dispatch(getsonglistActionClick(songlistId))
+                console.log(json.data)
+            }
+        }).catch(function(err) {
+            console.log(err)
+        })
+    } 
+}
+export function delSongToListAction (songId, songlistId) {
+    return dispatch => {
+        return fetch('/v1/editsonglist', {
+            method: 'delete',
+            credentials: 'include', //配置cookie来获取session
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ 
+                songId: songId,
+                songlistId: songlistId 
+            })
+        }).then(function(response) {
+            return response.json()
+        }).then(function(json) {
+            if (!json.success) {
+                console.log(json.error)
+            } else { 
+                dispatch(getsonglistActionClick(songlistId))
+                console.log(json.data)
+            }
+        }).catch(function(err) {
+            console.log(err)
+        })
+    }
 }
