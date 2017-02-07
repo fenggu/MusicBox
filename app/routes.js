@@ -23,12 +23,13 @@ app.post('/songs', userController.addsongs)
 app.delete('/songs/:id', userController.delsong)
 
 app.get('/songlist/:id', userController.getSonglist)
+
+
 app.post('/songlist', userController.createSonglist)
 app.delete('/songlist', userController.delSonglist)
 app.post('/editsonglist', userController.addsongsToSonglist)
 app.delete('/editsonglist', userController.delsongsToSonglist)
 app.get('/musiclists', userController.getMusiclist)
-
 app.post('/uploadfile', userController.uploadfile)
 
 module.exports = app;

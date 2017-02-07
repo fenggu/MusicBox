@@ -192,10 +192,7 @@ var delsong = async(req, res) => {
 }
 
 var addsongs = async(req, res) => {
-        var sess = req.session;
-        if (!sess.loggedIn) {
-            return res.json({ success: false, error: '请先登录' })
-        }
+        var sess = req.session; 
         var cond = {}
         console.log(req.body)
         var title = req.body['title'];
@@ -496,7 +493,8 @@ var addSongTolikes = async(req, res) => {
         sess.likes.splice(n, 1)
         try {
             await Users.save(user)
-            return res.json({ success: true, data: user, msg: "已取消收藏！" })
+            var userRet = getSelfInfo(sess)
+            return res.json({ success: true, data: userRet, msg: "已取消收藏！" })
         } catch (err) {
             return res.json({ success: false, error: err })
         }
@@ -543,7 +541,8 @@ var addSonglistTolikes = async(req, res) => {
             sess.songlist.splice(n, 1)
             try {
                 await Users.save(user)
-                return res.json({ success: true, data: user, msg: "已取消收藏！" })
+                var userRet = getSelfInfo(sess)
+                return res.json({ success: true, data: userRet, msg: "已取消收藏！" })
             } catch (err) {
                 return res.json({ success: false, error: err })
             }

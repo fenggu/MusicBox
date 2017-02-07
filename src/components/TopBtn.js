@@ -14,7 +14,7 @@ class TopBtn extends Component {
         const menu = (
           <Menu>
             <Menu.Item>
-              { user.loggedIn ?  <span onClick={logout.bind(this)}>退出登录</span> : <Link to="/login">登录</Link>     
+              { user.loggedIn ?  <span onClick={logout}>退出登录</span> : <Link to="/login">登录</Link>     
               }
             </Menu.Item>
             <Menu.Item>
