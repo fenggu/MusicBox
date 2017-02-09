@@ -18,7 +18,7 @@ class About extends Component {
         return ( 
           <div> 
             <TopBar title="关于"></TopBar>
-            一个弱鸡的自我反省中
+            <p>一个弱鸡的自我反省中</p>
           </div>
       )
     }

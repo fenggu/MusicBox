@@ -2,6 +2,10 @@ var Users = db.collection('users');
 var Songs = db.collection('songs');
 var Songlists = db.collection('songlists');
 var formidable = require('formidable')
+var fs = require("fs");
+var path = require("path");
+var dir = "./build/" //文件上传地址
+var local = 'http://localhost:8081/'
     /*注册*/
 var createUser = async(req, res) => {
         var username = req.body['username'];
@@ -99,20 +103,21 @@ var getSelf = async(req, res) => {
 }
 
 //获取全部音乐或者指定音乐
-var getsongs = async(req, res) => {
+var getsongs = async(req, res, next) => {
     // var sess = req.session;
     // if (!sess.loggedIn) {
     //     return res.json({ success: false, error: '请先登录, 暂无播放列表' })
     // }
+    // 'http://localhost:8081/'+
     var cond = {}
     var data = {}
     data.title = '全部音乐'
-    data.id = 'all'
-    console.log(req.params)
-    if (req.params.name && req.params.name != 'undefined') {
+    data.id = 'all' 
+    var query = req.query || {}
+    if (req.query.name && req.query.name != 'undefined') {
         data.title = '搜索结果'
         data.id = 'search'
-        cond['title'] = { $regex: new RegExp(req.params.name), $options: 'i' }
+        cond['title'] = { $regex: new RegExp(req.query.name), $options: 'i' }
     }
     try {
         var songs = await Songs.find(cond).toArray()
@@ -122,7 +127,11 @@ var getsongs = async(req, res) => {
     if (!songs) {
         return res.json({ success: false, error: '列表为空' })
     }
-
+    songs.map( s => {
+        s.url = local + s.url 
+        s.pic = local + s.pic  
+        s.lrc = fs.readFileSync(dir + s.lrc).toString()
+    })
     data.list = songs
     data.pic = 'http://localhost:8081/public/mdl.png'
     return res.json({ success: true, data: data })
@@ -136,15 +145,11 @@ var getsongsOnlyNames = async(req, res) => {
     var cond = {}
     if (req.body.name) {
         cond['title'] = { $regex: new RegExp(req.body.name), $options: 'i' }
-    }
-    // if (req.body.name == '') {
-    //     cond = {}
-    // }
+    } 
     var sort = { 'title': 1 }
 
     try {
         var songs = await Songs.find(cond, { _id: 1, title: 1 }).sort(sort).toArray()
-        console.log(songs)
     } catch (err) {
         return res.json({ success: false, error: err })
     }
@@ -165,17 +170,43 @@ var delsong = async(req, res) => {
     var cond = {}
     if (req.params.id) {
         cond._id = ObjectID(req.params.id)
-    }
-    try {
-        var songs = await Songs.remove(cond)
-    } catch (err) {
-        console.log(err)
-        return res.json({ success: false, error: err })
-    }
-    if (!songs) {
-        return res.json({ success: false, error: '列表为空' })
+    } else {
+        return res.json({ success: false, error: '缺少参数' })
     }
 
+    try {
+        var song = await Songs.findOne(cond)
+    } catch (err) { 
+        return res.json({ success: false, error: err })
+    }
+    console.log(song)
+    var mp3 = song.url
+    var lrc = song.lrc
+    var pic = song.pic
+    fs.unlink(dir + mp3, function(err) {
+       if (err) {
+           return console.error(err);
+       }
+       console.log("音乐删除成功！");
+    });
+    fs.unlink(dir + lrc, function(err) {
+       if (err) {
+           return console.error(err);
+       }
+       console.log("音乐删除成功！");
+    });
+    fs.unlink(dir + pic, function(err) {
+       if (err) {
+           return console.error(err);
+       }
+       console.log("音乐删除成功！");
+    });
+
+    try {
+        var song = await Songs.remove(cond)
+    } catch (err) { 
+        return res.json({ success: false, error: err })
+    }
     try {
         var songs = await Songs.find({}).toArray()
     } catch (err) {
@@ -202,12 +233,13 @@ var addsongs = async(req, res) => {
         var author = req.body['author'];
         var url = req.body['url'];
         var pic = req.body['pic'];
-
+        var lrc = req.body['lrc'];
         var data = {
             title: title,
             author: author,
-            url: 'http://localhost:8081/' + url,
-            pic: 'http://localhost:8081/' + pic,
+            url: url,
+            pic: pic,
+            lrc: lrc,
             type: 0
         };
         console.log(data)
@@ -348,6 +380,7 @@ var getSonglist = async(req, res) => {
     data.list = songs
     res.json({ success: true, data: data })
 }
+
 var delSonglist = async(req, res) => {
 
     var cond = {}
@@ -365,6 +398,7 @@ var delSonglist = async(req, res) => {
     }
     return res.json({ success: true, data: req.body.songlistId })
 }
+
 var createSonglist = async(req, res) => {
     var title = req.body['title'];
     var songs = []
@@ -391,6 +425,7 @@ var createSonglist = async(req, res) => {
     }
     res.json({ success: true, data: { _id: [data._id] } });
 }
+
 var addsongsToSonglist = async(req, res) => {
     var cond = {}
     var body = req.body

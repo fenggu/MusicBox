@@ -197,6 +197,98 @@ html {
     }
 
 }
+.player-max {
+    text-align: center;
+    .player-main {
+        position: fixed;
+        height: 100vh;
+        width: 100vw;
+        top: 0;
+        z-index: 3;
+        color: #fff;
+        .player-lrc {
+            height: 70vh;
+            width: 100vw;
+            padding: 5vw;
+            text-align: center;
+            overflow: hidden;
+            .lrc-body {
+                position: relative; 
+                top: 50px;
+                p {
+                    font-size: 14px;
+                }
+                .lrc-active {
+                    color:  #69CBED;
+                }
+            }
+        }
+        .player-model {
+            background: rgba(0, 0, 0, 0.4);
+            height: 30vh;
+            padding-top: 3rem;
+            .ant-progress-line { 
+                width: 63%; 
+                margin-left: 10%;
+                position: relative;
+                height: 4px;
+                top: 0.3rem;
+                div {
+                    width: 100%;   
+                    position: absolute;
+                }
+                .progress-background {
+                    background: #eee;
+                    height:  5px
+                }
+                .progress-active {
+                    background: #69CBED;
+                    height: 5px;
+                    z-index: 999;
+                }
+            }
+            .btn {
+                div {
+                    display: inline-block;
+                    .iconfont {
+                        font-size: 3rem;
+                        margin-right: 2rem
+                    }
+                }
+            }
+            .time {
+                position: relative;
+                top: -0.5rem;
+                left: 35%;
+            }
+        }
+        .top-bar { 
+            background: rgba(0, 0, 0, 0.4)
+        }
+
+    }
+    .masking { 
+        z-index: 2;
+        position: fixed;
+        height: 100vh;
+        width: 100vw;
+        top: 0;
+        text-align: center;
+        background: rgba(0, 0, 0, 0.6); 
+    }
+    .player-pic {
+        top: 6rem;
+        width: 100vw;
+        text-align: center;
+        z-index: 1;
+        position: fixed;
+        img { 
+            width: 100vw;
+            height: 60vh;
+            filter: blur(10px);
+        }
+    }
+}
 .player {
     position: fixed;
     bottom: 0;
@@ -251,11 +343,14 @@ html {
         }
     }
     .ant-progress-line {  
+        width: 50%;
+        position: relative;
+        top: -3.6rem;
+        left: 6rem;
+        height: 4px;
         div {
-            width: 50%;
-            position: fixed;
-            bottom: 1.5rem;
-            left: 6rem;
+            width: 100%;
+            position: absolute;
         }
         .progress-background {
             background: #eee;

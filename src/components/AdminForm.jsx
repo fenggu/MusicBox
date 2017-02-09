@@ -13,6 +13,7 @@ class RootLogin extends Component {
       title: "",
       author: "",
       pic: "",
+      lrc: "",
       isList: 'song'
     }
     this.state = defaultState
@@ -27,6 +28,7 @@ class RootLogin extends Component {
         state.author = values.author
         if (isList == 'list') {
           state.url = ""
+          state.lrc = ""
           addsonglist(state)
         } 
 
@@ -57,22 +59,35 @@ class RootLogin extends Component {
           console.log(info.file);
           if (!info.file.error) {
             var url = info.file.response.data.file.path.slice(6)
-            state.url = url
-            console.log(state) 
+            state.url = url 
           } 
         }
       },
       defaultFileList: [],
     };
-    const uploadPicprops = { 
+
+
+    const uploadLrcprops = { 
       action: '/v1/uploadfile',
       onChange(info) {
         if (info.file.status !== 'uploading') {
           console.log(info.file);
           if (!info.file.error) {
+            var lrc = info.file.response.data.file.path.slice(6)
+            state.lrc = lrc
+          } 
+        }
+      },
+      defaultFileList: [],
+    };
+
+    const uploadPicprops = { 
+      action: '/v1/uploadfile',
+      onChange(info) {
+        if (info.file.status !== 'uploading') { 
+          if (!info.file.error) {
             var pic = info.file.response.data.file.path.slice(6)
-            state.pic = pic
-            console.log(pic) 
+            state.pic = pic 
           } 
         }
       },
@@ -112,6 +127,20 @@ class RootLogin extends Component {
             className={state.isList=="list"? "hidden":""}
           >
             <Upload {...uploadSongprops}>
+              <Button>
+                <Icon type="upload" /> Upload
+              </Button>
+            </Upload>
+          </FormItem>
+
+
+          <FormItem
+            {...formItemLayout}
+            label="上传歌词"
+            extra="上传歌词"  
+            className={state.isList=="list"? "hidden":""}
+          >
+            <Upload {...uploadLrcprops}>
               <Button>
                 <Icon type="upload" /> Upload
               </Button>

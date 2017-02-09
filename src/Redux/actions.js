@@ -200,7 +200,7 @@ export function getsonglistActionClick (id) {
 
 export function getallsongActionClick (name) {
     return dispatch => {
-        return fetch('/v1/songs/' + name, {
+        return fetch('/v1/songs?name=' + name, {
             method: 'get',
             headers: {
                 'Accept': 'application/json',
@@ -259,7 +259,8 @@ export function addsongActionClick (song) {
                 title: song.title,
                 url: song.url,
                 author: song.author,
-                pic: song.pic
+                pic: song.pic,
+                lrc: song.lrc
             })
         }).then(function(response) {
             return response.json()

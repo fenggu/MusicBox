@@ -10,6 +10,7 @@ class RootPlayer extends Component {
         super(props);
         this.bindFunc() 
         var defaultState = {
+            max: false,
             progress: 0, 
             type: 0,
             audio: {
@@ -18,7 +19,8 @@ class RootPlayer extends Component {
                 duration: 0
             },
             index: 0,
-            oId: ""
+            oId: "",
+            lrcObj: {}
         }
         this.state = defaultState
     } 
@@ -35,7 +37,7 @@ class RootPlayer extends Component {
         let { audio, oId, progress } = this.state
 
         if (!song) return false 
-        if (oId == "" || song._id != oId) {
+        if (oId == "") {
             oId = song._id  
             audio.currentTime = 0 
             audio.dom.currentTime = 0
@@ -44,8 +46,8 @@ class RootPlayer extends Component {
                 audio, 
                 oId,
                 progress: 0,
-            })
-        }
+            }) 
+        } 
     }
 
     componentDidMount() {
@@ -57,21 +59,30 @@ class RootPlayer extends Component {
     }
 
     bindFunc() {
-        this.bindFuncNames = ['getTime', 'onPlay', 'getProgress', 'toLittle', 'audioSeek', 'next', 'changePlay']
+        this.bindFuncNames = ['getTime', 'toMax', 'onPlay', 'getProgress', 'toLittle', 'audioSeek', 'next', 'changePlay']
         this.bindFuncs = {}
         this.bindFuncNames.forEach( funcName => {
           this.bindFuncs[funcName] = this[funcName].bind(this)
         })
     }
 
-    audioSeek(e){ //跳转
-        var audio = this.state.audio
-        var length = e.pageX - e.target.offsetLeft; 
-        var percent = length / e.target.offsetWidth; 
-        var currentTime = percent * audio.duration;
-        audio.currentTime = currentTime
-        audio.dom.currentTime = currentTime
-        this.setState(audio)
+    toMax(){
+        console.log(!this.state.max)
+        this.setState({max: !this.state.max})
+    }
+
+    audioSeek(left, width) { //跳转
+        return e => {
+            var leftLength = document.body.clientWidth * left
+            var offsetWidth = document.body.clientWidth * width
+            var audio = this.state.audio 
+            var length = e.pageX - leftLength;  
+            var percent = length / offsetWidth;  
+            var currentTime = percent * audio.duration
+            audio.currentTime = currentTime
+            audio.dom.currentTime = currentTime
+            this.setState(audio)
+        }
     }
 
     next = value => {
@@ -95,11 +106,16 @@ class RootPlayer extends Component {
             index = this.getRandomIndex(index, songs.list.length) 
         }
 
-        if (type == 2) { 
+        if (type == 2) { //单曲循环
             this.setState({  
                 audio, 
                 progress: 0
             })
+            if (audio.dom.paused) { 
+                audio.dom.play()
+            } else {
+               return false
+            }
         }
         var song = songs.list[index] 
         getnextsongAction(song)
@@ -184,9 +200,9 @@ class RootPlayer extends Component {
         var progress = e.target.currentTime / e.target.duration
 
         if (progress == 1) {
-            this.next (1)
+            this.next (1) 
         }
-        progress = progress * 50 +'%'; 
+        progress = progress * 100 +'%'; 
         this.setState({progress, audio}) 
     }
 
@@ -217,6 +233,30 @@ class RootPlayer extends Component {
         type == 3 ? type = 0: ""
         this.setState({type})
     }
+
+    getLrc (lrc) { 
+        var lyrics = lrc.split('\n');  
+        var lrcObj = {} 
+        lrcObj.txt = [] 
+        lrcObj.time = []
+        for(var i=0; i<lyrics.length; i++){
+            var lyric = decodeURIComponent(lyrics[i]);
+            var timeReg = /\[\d*:\d*((\.|\:)\d*)*\]/g;
+            var timeRegExpArr = lyric.match(timeReg);
+            if (!timeRegExpArr) {continue;}
+            var clause = lyric.replace(timeReg,'');
+            lrcObj.txt.push(clause)
+            for(var k = 0,h = timeRegExpArr.length;k < h;k++) {
+                var t = timeRegExpArr[k];
+                var min = Number(String(t.match(/\[\d*/i)).slice(1)),
+                    sec = Number(String(t.match(/\:\d*/i)).slice(1));
+                var time = min * 60 + sec;
+                lrcObj.time.push(time)
+                lrcObj[time] =clause
+            }
+        }
+        return lrcObj
+    }
     /* render */
     getMenu () {
         var type = this.state.type
@@ -230,39 +270,114 @@ class RootPlayer extends Component {
             return (<i className="iconfont icon-ttpodicon"></i>)
         }
     }
+
+    getMaxPlayer () {
+        var max = this.state.max 
+        if (!max) return false
+        let { audio, progress } = this.state 
+        let { song, addlikesong } = this.props 
+        let paused = audio.dom.paused
+        let lrc = song.lrc 
+        let lrcObj = this.getLrc(lrc) 
+        let timer = lrcObj.time;
+        let lrctxt = lrcObj.txt
+        let currentTime = audio.currentTime 
+        var lrcgress = - parseFloat(progress) 
+        var lrcbody = this.refs.lrc 
+        if (lrcbody) { 
+            var offsetHeight = lrcbody.offsetHeight 
+            lrcgress = offsetHeight * lrcgress * 0.01 + 50
+        } 
+        return (
+            <div className="player-max">
+                <div className='player-main'> 
+                    <header className="top-bar">  
+                      <i className="iconfont icon-suoxiao-copy" onClick={this.toMax.bind(this)}></i>
+  
+                      {song ? this.bindFuncs.toLittle(song.title): ""}
+                    </header>
+                    <div className='player-lrc'>
+                        <div className='lrc-body' ref="lrc" style={{top: lrcgress }}>
+                            {timer.map( (t, index) => {
+                                return <p key={t} className={ currentTime > t && currentTime < timer[index+1] ?"lrc-active": ""}>{lrcObj[t]}</p>
+                            })}
+                        </div>
+                        
+                    </div>
+                    <div className="player-model">   
+
+                        <div className="ant-progress-line" onClick={this.bindFuncs.audioSeek(0.1, 0.63).bind(this)} >
+                            <div style={{width: this.state.progress}} className="progress-active"></div>
+                            <div className="progress-background"></div>
+                        </div>
+                        <span className="time"> 
+                            <span>{this.bindFuncs.getTime(audio.currentTime)}/</span>
+                            <span>{this.bindFuncs.getTime(audio.duration)}</span>
+                        </span>
+                        <div className='btn'> 
+                            <div className="player-btn">
+                                <i className={this.isLikeSong(song ? song._id: "")} onClick={addlikesong.bind(this, song? song._id : "")}></i> 
+                                <i className="iconfont icon-xiayishou1" onClick={this.bindFuncs.next.bind(this,-1)}></i>
+                                <i className={!paused ? "iconfont icon-bofang1 hidden": "iconfont icon-bofang1"} onClick={this.bindFuncs.onPlay.bind(this)}></i>
+                                <i className={paused ? "iconfont icon-iconfont67 hidden": "iconfont icon-iconfont67"}  onClick={this.bindFuncs.onPlay.bind(this)}></i> 
+                                <i className="iconfont icon-xiayishou" onClick={this.bindFuncs.next.bind(this,1)}></i>
+                            </div> 
+                            <div className="player-type" onClick={this.bindFuncs.changePlay.bind(this)}>
+                                {this.getMenu()}
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+
+                <div className="masking"> 
+                </div>
+
+                    
+                <div className="player-pic">
+                    <div></div>
+                    <img src={ song == undefined? 'http://localhost:8081/public/default.jpg': song.pic } alt=""/>
+                </div>
+            </div>
+            )
+    }
+
      render() {    
-        let { audio } = this.state 
+        let { audio, max } = this.state 
         let { song, addlikesong } = this.props 
         var paused = audio.dom.paused
         return ( 
-            <div className="player"> 
-                <div className="player-pic"  onClick={this.bindFuncs.onPlay.bind(this)} >
-                    <img src={ song == undefined? 'http://localhost:8081/public/default.jpg': song.pic } alt=""/>
-                </div>
-                <div className="player-btn">
-                    <i className="iconfont icon-xiayishou1" onClick={this.bindFuncs.next.bind(this,-1)}></i>
-                    <i className={!paused ? "iconfont icon-bofang1 hidden": "iconfont icon-bofang1"} onClick={this.bindFuncs.onPlay.bind(this)}></i>
-                    <i className={paused ? "iconfont icon-iconfont67 hidden": "iconfont icon-iconfont67"}  onClick={this.bindFuncs.onPlay.bind(this)}></i> 
-                    <i className="iconfont icon-xiayishou" onClick={this.bindFuncs.next.bind(this,1)}></i>
+            <div>
+                <div className={max?"hidden":"player"}>   
+                    <div className="player-pic"  onClick={this.bindFuncs.toMax.bind(this)} >
+                        <img src={ song == undefined? 'http://localhost:8081/public/default.jpg': song.pic } alt=""/>
+                    </div>
+                    <div className="player-btn">
+                        <i className="iconfont icon-xiayishou1" onClick={this.bindFuncs.next.bind(this,-1)}></i>
+                        <i className={!paused ? "iconfont icon-bofang1 hidden": "iconfont icon-bofang1"} onClick={this.bindFuncs.onPlay.bind(this)}></i>
+                        <i className={paused ? "iconfont icon-iconfont67 hidden": "iconfont icon-iconfont67"}  onClick={this.bindFuncs.onPlay.bind(this)}></i> 
+                        <i className="iconfont icon-xiayishou" onClick={this.bindFuncs.next.bind(this,1)}></i>
 
-                    <i className="iconfont icon-suoyoukeshi" onClick={ (e => {browserHistory.push('/list/songs')}).bind(this)}></i>
+                        <i className="iconfont icon-suoyoukeshi" onClick={ (e => {browserHistory.push('/list/songs')}).bind(this)}></i>
+                    </div>
+                    <div className="player-type" onClick={this.bindFuncs.changePlay.bind(this)}>
+                        {this.getMenu()}
+                    </div>
+                    <p>{song ? this.bindFuncs.toLittle(song.title): ""}
+                        <i className={this.isLikeSong(song ? song._id: "")} onClick={addlikesong.bind(this, song? song._id : "")}></i> 
+                    </p>  
+                    <div className="ant-progress-line" onClick={this.bindFuncs.audioSeek(0.2, 0.5).bind(this)} >
+                        <div style={{width: this.state.progress}} className="progress-active"></div>
+                        <div className="progress-background"></div>
+                    </div>
+                    <span className="time"> 
+                        <span>{this.bindFuncs.getTime(audio.currentTime)}/</span>
+                        <span>{this.bindFuncs.getTime(audio.duration)}</span>
+                    </span>
+                    <audio id="audio" onTimeUpdate={this.bindFuncs.getProgress.bind(this)} ref="audio" src={song? song.url:""}></audio>
                 </div>
-                <div className="player-type" onClick={this.bindFuncs.changePlay.bind(this)}>
-                    {this.getMenu()}
-                </div>
-                <p>{song ? this.bindFuncs.toLittle(song.title): ""}
-                    <i className={this.isLikeSong(song ? song._id: "")} onClick={addlikesong.bind(this, song? song._id : "")}></i> 
-                </p>  
-                <div className="ant-progress-line">
-                    <div style={{width: this.state.progress}}  onClick={this.bindFuncs.audioSeek.bind(this)}  className="progress-active"></div>
-                    <div onClick={this.bindFuncs.audioSeek.bind(this)} className="progress-background"></div>
-                </div>
-                <span className="time"> 
-                    <span>{this.bindFuncs.getTime(audio.currentTime)}/</span>
-                    <span>{this.bindFuncs.getTime(audio.duration)}</span>
-                </span>
-                <audio id="audio" onTimeUpdate={this.bindFuncs.getProgress.bind(this)} ref="audio" src={song? song.url:""}></audio>
-            </div>
+                {this.getMaxPlayer()}
+            </div> 
         )
     }
 }
@@ -275,9 +390,7 @@ function mapStateToProps(state) {
     }
 }
 
-// Map Redux actions to component props
 function mapDispatchToProps(dispatch) {  
-    
     return bindActionCreators({
         getnextsongAction: getnextsongAction,
         addlikesong: addlikesongActionClick,
