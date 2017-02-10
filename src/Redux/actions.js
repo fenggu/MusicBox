@@ -231,7 +231,7 @@ export function delallsongActionClick (id) {
             if (!json.success) {
                 console.log(json.error)
             } else {
-                dispatch(getsonglistAction(json.data)) 
+                dispatch(getallsongActionClick()) 
             }
         }).catch(function(err) {
             console.log(err)
@@ -315,7 +315,8 @@ export function delsonglistActionClick (songlistId) {
             if (!json.success) {
                 console.log(json.error)
             } else {
-                dispatch(getmusiclistActionClick()) 
+                dispatch(getmusiclistActionClick())  
+                message.success('删除成功');
             }
         }).catch(function(err) {
             console.log(err)
@@ -422,8 +423,7 @@ export function getlikesActionClick (id) {
             if (!json.success) {
                 console.log(json.error)
             } else {
-                dispatch(getsonglistAction(json.data))
-                console.log(json.data)
+                dispatch(getsonglistAction(json.data)) 
             }
         }).catch(function(err) {
             console.log(err)

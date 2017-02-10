@@ -53,11 +53,10 @@ class RootPlayer extends Component {
     componentDidMount() {
         var audio = this.refs.audio
         var audiostate = this.state.audio;
-        audiostate.dom = audio  
+        audiostate.dom = audio   
         this.setState({audio: audiostate})
 
-    }
-
+    } 
     bindFunc() {
         this.bindFuncNames = ['getTime', 'toMax', 'onPlay', 'getProgress', 'toLittle', 'audioSeek', 'next', 'changePlay']
         this.bindFuncs = {}
@@ -122,7 +121,10 @@ class RootPlayer extends Component {
 
 
         //存储缓存逻辑
-        this.setlocalStorage(song)
+        if (song) {
+            this.setlocalStorage(song)
+        }
+        
 
         this.setState({ 
             index, 
@@ -138,6 +140,7 @@ class RootPlayer extends Component {
             return index
         }
     }
+
     setlocalStorage(song) {
         var { songs } = this.props
         var Ids = []
@@ -219,8 +222,8 @@ class RootPlayer extends Component {
     toLittle(content) { //缩短字体
         var newcontent = ""
         if (content == undefined) return
-        if (content.length > 15) {
-            newcontent = content.slice(0, 15) + "..."
+        if (content.length > 8) {
+            newcontent = content.slice(0, 8) + "..."
         } else {
             newcontent = content;
         } 
@@ -234,8 +237,7 @@ class RootPlayer extends Component {
         this.setState({type})
     }
 
-    getLrc (lrc) {  //解析lrc
-        console.log(lrc)
+    getLrc (lrc) {  //解析lrc 
         if (!lrc) return false
         var lyrics = lrc.split('\n');  
         var lrcObj = {} 
@@ -289,7 +291,7 @@ class RootPlayer extends Component {
             var lrcbody = this.refs.lrc 
             if (lrcbody) { 
                 var offsetHeight = lrcbody.offsetHeight 
-                lrcgress = offsetHeight * lrcgress * 0.01 + 50
+                lrcgress = offsetHeight * lrcgress * 0.01 + 150
             }  
         } else {
             var timer = ['0']
@@ -302,7 +304,7 @@ class RootPlayer extends Component {
                     <header className="top-bar">  
                       <i className="iconfont icon-suoxiao-copy" onClick={this.toMax.bind(this)}></i>
   
-                      {song ? this.bindFuncs.toLittle(song.title): ""}
+                      {song ? song.title: ""}
                     </header>
                     <div className='player-lrc'>
                         <div className='lrc-body' ref="lrc" style={{top: lrcgress }}>
@@ -372,7 +374,7 @@ class RootPlayer extends Component {
                     <div className="player-type" onClick={this.bindFuncs.changePlay.bind(this)}>
                         {this.getMenu()}
                     </div>
-                    <p>{song ? this.bindFuncs.toLittle(song.title): ""}
+                    <p>{song ? song.title: ""}
                         
                     </p>  
                     <div className="ant-progress-line" onClick={this.bindFuncs.audioSeek(0.2, 0.5).bind(this)} >
@@ -383,7 +385,7 @@ class RootPlayer extends Component {
                         <span>{this.bindFuncs.getTime(audio.currentTime)}/</span>
                         <span>{this.bindFuncs.getTime(audio.duration)}</span>
                     </span>
-                    <audio id="audio" onTimeUpdate={this.bindFuncs.getProgress.bind(this)} ref="audio" src={song? song.url:""}></audio>
+                    <audio id="audio" onError={this.bindFuncs.next.bind(this, 1)} onTimeUpdate={this.bindFuncs.getProgress.bind(this)} ref="audio" src={song? song.url:""}></audio>
                 </div>
                 {this.getMaxPlayer()}
             </div> 

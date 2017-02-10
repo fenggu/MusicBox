@@ -134,7 +134,12 @@ var getsongs = async(req, res, next) => {
             s.pic = local + s.pic
         }
         if (s.lrc) {
-            s.lrc = fs.readFileSync(dir + s.lrc).toString()
+            try {
+                 s.lrc = fs.readFileSync(dir + s.lrc).toString()
+             } catch (err) {
+                console.log(err)
+             }
+           
         } 
     })
     data.list = songs
@@ -173,6 +178,7 @@ var delsong = async(req, res) => {
     //     return res.json({ success: false, error: '请先登录, 暂无播放列表' })
     // }
     var cond = {}
+    var id = req.params.id 
     if (req.params.id) {
         cond._id = ObjectID(req.params.id)
     } else {
@@ -183,8 +189,21 @@ var delsong = async(req, res) => {
         var song = await Songs.findOne(cond)
     } catch (err) {
         return res.json({ success: false, error: err })
+    } 
+
+    var users = await Users.find({ likes: id }).toArray()
+
+    if (users){
+        for (let i = 0; i < users.length; i++) {
+            var a = users[i] 
+            var num = a.likes.indexOf(id)
+            if (num > -1) {
+                a.likes.splice(num, 1)
+            } 
+            await Users.save(a) 
+        } 
     }
-    console.log(song)
+
     var mp3 = song.url
     var lrc = song.lrc
     var pic = song.pic
@@ -211,23 +230,8 @@ var delsong = async(req, res) => {
         var song = await Songs.remove(cond)
     } catch (err) {
         return res.json({ success: false, error: err })
-    }
-    try {
-        var songs = await Songs.find({}).toArray()
-    } catch (err) {
-        console.log(err)
-        return res.json({ success: false, error: err })
-    }
-    if (!songs) {
-        return res.json({ success: false, error: '列表为空' })
-    }
-
-    var data = {}
-    data.title = '全部音乐'
-    data.id = 'all'
-    data.list = songs
-    data.pic = 'http://localhost:8081/public/mdl.png'
-    return res.json({ success: true, data: data })
+    }   
+    return res.json({ success: true, data: cond._id })
 }
 
 var addsongs = async(req, res) => {
@@ -394,11 +398,33 @@ var getSonglist = async(req, res) => {
 var delSonglist = async(req, res) => {
 
     var cond = {}
+    var id = req.body.songlistId
     if (req.body.songlistId) {
         cond._id = ObjectID(req.body.songlistId)
     } else {
         res.json({ success: false, error: '缺少参数' })
     }
+
+    var users = await Users.find({ songlist: id }).toArray()
+    var songlist = await Songlists.findOne(cond)
+    if (users){
+        for (let i = 0; i < users.length; i++) {
+            var a = users[i] 
+            var num = a.songlist.indexOf(id)
+            if (num > -1) {
+                a.songlist.splice(num, 1)
+            } 
+            await Users.save(a) 
+        } 
+    }
+ 
+    var pic = songlist.pic 
+    fs.unlink(dir + pic, function(err) {
+        if (err) {
+            return console.error(err);
+        }
+        console.log("图片删除成功！");
+    });
 
     try {
         await Songlists.remove(cond)

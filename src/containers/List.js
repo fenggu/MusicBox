@@ -29,7 +29,8 @@ class RootList extends Component {
 
     isLikeList(id) {
         var { user } = this.props
-        if (this.props.params.id == "likes" || this.state.id == "all" || this.state.id == "history" || this.state.id == 'songs') return ""
+        var id = this.props.params.id
+        if (id == "likes" || id == "all" || id == "history" || id == 'songs') return ""
         if (user.songlist == undefined) return "iconfont icon-weibiaoti1"
         if (user.songlist.indexOf(id) > -1) {
             return "iconfont icon-aixin"

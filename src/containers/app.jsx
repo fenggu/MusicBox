@@ -55,7 +55,7 @@ if (!localStorage.history) {
 const logger = createLogger() 
 const createStoreWithMiddleware = applyMiddleware(
   thunk, 
-  logger
+  // logger
 )(createStore);
 
 let store = createStoreWithMiddleware(reducer,initState);
