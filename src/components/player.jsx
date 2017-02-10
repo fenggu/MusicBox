@@ -30,10 +30,10 @@ class RootPlayer extends Component {
         
         var index = this.state.index 
         var _song = songs.list[index]  
-
-        if (!song._id) {  
+        if (!song._id) {
             getnextsongAction(_song) 
-        }  
+        }
+        
     } 
 
     componentWillUpdate() {
@@ -60,15 +60,6 @@ class RootPlayer extends Component {
         var audiostate = this.state.audio;
         audiostate.dom = audio    
 
-        var index = this.state.index 
-        var _song = songs.list[index]  
-        if (song._id) { 
-            if (audiostate.dom.paused) { 
-                audiostate.dom.play()
-            } else {
-                return false
-            }
-        }
         this.setState({audio: audiostate})
 
     } 
