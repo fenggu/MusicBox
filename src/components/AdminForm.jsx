@@ -97,7 +97,7 @@ class RootLogin extends Component {
     var onChangeSelect = this.onChangeSelect().bind(this)
     return (
       <div>
-        <Select value={state.isList} onChange={onChangeSelect}>
+        <Select value={state.isList} style={{marginTop: 20, marginBottom: 20}} onChange={onChangeSelect}>
           <Option value='song'>歌曲</Option>
           <Option value='list'>歌单</Option>
         </Select>

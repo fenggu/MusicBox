@@ -48,6 +48,10 @@ html {
     background-color: #fff; 
     position: relative;
     display: flex;
+    .ant-dropdown-link {
+        margin-right: 1rem;
+        color: #333;
+    }
     div {
         flex: 1;
         display: inline-block; 
@@ -99,7 +103,11 @@ html {
     display: flex;
     width: 100%;
     height: auto;
+    margin: 1rem 0;
     div {
+        a {
+            color:#333;     
+        }
         flex: 1;
             text-align: center;
         p { 
@@ -153,6 +161,7 @@ html {
             left: 1rem;
         }
         p {
+            color: #333;
             padding-left: 5rem;
             line-height: 4rem;
             font-size: 1.7rem;
@@ -251,8 +260,12 @@ html {
                 div {
                     display: inline-block;
                     .iconfont {
+
                         font-size: 3rem;
                         margin-right: 2rem
+                    }
+                    .icon-aixin {
+                        color: #CE0013;
                     }
                 }
             }
@@ -386,13 +399,14 @@ html {
     .list-child {
         display: inline-block;
         width: 33%;
-        padding: 5%;
+        padding: 1%;
         text-align: center;
         img { 
             width: 75%;
             height: auto;
         }
         h3 {
+            color:#333;
             text-align: center;
         }
     }
@@ -408,5 +422,8 @@ html {
 }
 .admin-table {
     display: inline-block;
-    width: 80%
+    width: 80%;
+    .ant-select {
+        width: 300px
+    }
 }

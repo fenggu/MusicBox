@@ -129,8 +129,13 @@ var getsongs = async(req, res, next) => {
     }
     songs.map(s => {
         s.url = local + s.url
-        s.pic = local + s.pic
-        s.lrc = fs.readFileSync(dir + s.lrc).toString()
+       
+        if (s.pic) {
+            s.pic = local + s.pic
+        }
+        if (s.lrc) {
+            s.lrc = fs.readFileSync(dir + s.lrc).toString()
+        } 
     })
     data.list = songs
     data.pic = 'http://localhost:8081/public/mdl.png'
@@ -193,13 +198,13 @@ var delsong = async(req, res) => {
         if (err) {
             return console.error(err);
         }
-        console.log("音乐删除成功！");
+        console.log("歌词删除成功！");
     });
     fs.unlink(dir + pic, function(err) {
         if (err) {
             return console.error(err);
         }
-        console.log("音乐删除成功！");
+        console.log("图片删除成功！");
     });
 
     try {
@@ -219,7 +224,7 @@ var delsong = async(req, res) => {
 
     var data = {}
     data.title = '全部音乐'
-    data.id = 'likes'
+    data.id = 'all'
     data.list = songs
     data.pic = 'http://localhost:8081/public/mdl.png'
     return res.json({ success: true, data: data })
@@ -229,22 +234,21 @@ var addsongs = async(req, res) => {
         var sess = req.session;
         var cond = {}
         console.log(req.body)
+        var fields = ['title', 'author', 'url', 'pic', 'lrc']
         var title = req.body['title'];
         var author = req.body['author'];
         var url = req.body['url'];
         var pic = req.body['pic'];
         var lrc = req.body['lrc'];
-        var data = {
-            title: title,
-            author: author,
-            url: url,
-            pic: pic,
-            lrc: lrc,
-            type: 0
-        };
-        console.log(data)
+        var data = {}
+        fields.map(function(f) {
+            var v = req.body[f];
+            if (req.body[f])
+                data[f] = v;
+        }); 
+
         try {
-            await Songs.insert(data)
+           var song =  await Songs.insert(data)
         } catch (err) {
             console.error(err)
             return res.json({ success: false, error: '创建失败：' + err })
@@ -266,7 +270,7 @@ var addsongs = async(req, res) => {
         data.list = songs
         data.pic = 'http://localhost:8081/public/mdl.png'
 
-        return res.json({ success: true, data: data })
+        return res.json({ success: true, data: song._id })
     }
     /* 获取我的歌单列表 一个歌单一个对象
         eg: playlist : {
@@ -327,16 +331,19 @@ var getlikes = async(req, res) => {
         cond._id = { $in: Ids }
         console.log(Ids)
         try {
-            var list = await Songs.find(cond).toArray()
+            var songs = await Songs.find(cond).toArray()
         } catch (err) {
 
             return res.json({ success: false, error: err })
         }
-        if (!list) {
+        if (!songs) {
             return res.json({ success: false, data: {}, error: "列表为空，快去添加收藏吧" })
         }
         var data = {}
-        data.list = list
+        songs.map( s => {
+            s = getlocalSong(s)
+        })
+        data.list = songs
         data.title = '我的收藏'
         data.id = 'likes'
         data.pic = 'http://localhost:8081/public/mdl.png'
@@ -376,7 +383,10 @@ var getSonglist = async(req, res) => {
     var data = {}
     data.title = songlist.title
     data.id = songlist._id
-    data.pic = 'http://localhost:8081/' + songlist.pic
+    data.pic = local + songlist.pic 
+    songs.map( s => {
+        s = getlocalSong(s)
+    })
     data.list = songs
     res.json({ success: true, data: data })
 }
@@ -431,8 +441,7 @@ var addsongsToSonglist = async(req, res) => {
     var body = req.body
     var songlistId = req.body.songlistId
     var songId = req.body.songId
-    try {
-
+    try { 
         var songIdObj = await ObjectID(songId) 
     } catch(err) {
         return res.json({ success: false, error: 'id不合法' })
@@ -608,7 +617,6 @@ var addSonglistTolikes = async(req, res) => {
 
         user.songlist.push(songlistId)
         sess.songlist.push(songlistId)
-        console.log(user)
         try {
             await Users.save(user)
             var userRet = getSelfInfo(user)
@@ -624,9 +632,28 @@ var addSonglistTolikes = async(req, res) => {
 
 var uploadfile = async(req, res) => {
     var obj = {};
+    var dirpath =  "./build/public/upload" 
+
+    if (!fs.existsSync(dirpath)) { //判断路径是否存在 不存在啧创建
+        var pathtmp;
+        dirpath.split(path.sep).forEach(function(dirname) {
+            if (pathtmp) {
+                pathtmp = path.join(pathtmp, dirname); //如果存在则假如子文件夹
+            }
+            else {
+                pathtmp = dirname;
+            }
+            if (!fs.existsSync(pathtmp)) { //创建失败
+                if (!fs.mkdirSync(pathtmp)) {
+                    return false;
+                }
+            }
+        });
+    }
+
     var form = new formidable.IncomingForm({
         encoding: "utf-8",
-        uploadDir: "./build/public/upload", //文件上传地址
+        uploadDir: dirpath, //文件上传地址
         keepExtensions: true //保留后缀
     });
     form.parse(req)
@@ -655,7 +682,17 @@ var getSelfInfo = (sess) => {
     }
     return userRet
 }
+var getlocalSong = (song) => {
+    song.url = local + song.url
 
+    if (song.pic) {
+            song.pic = local + song.pic
+        }
+    if (song.lrc) {
+        song.lrc = fs.readFileSync(dir + song.lrc).toString()
+    } 
+    return song
+}
 var getUserRet = (user) => {
     var userRet = {
         _id: user._id,

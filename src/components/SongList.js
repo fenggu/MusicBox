@@ -7,11 +7,11 @@ class SongList extends Component {
         super(props);
     } 
 
-    toLittle(content) { //缩短字体
+    toLittle(content, num) { //缩短字体
         var newcontent = ""
         if (content == undefined) return
-        if (content.length > 20) {
-            newcontent = content.slice(0, 20) + "..."
+        if (content.length > num) {
+            newcontent = content.slice(0, num) + "..."
         } else {
             newcontent = content;
         } 
@@ -67,7 +67,7 @@ class SongList extends Component {
                 {
                     songlist.map((song, index) =>   
                         <div key={index} onClick={ this.onChangeSong.bind(this, song) }> 
-                            <p> <small>{index + 1}</small>{this.toLittle(song.title)} <span>{song.author}</span></p>
+                            <p> <small>{index + 1}</small>{this.toLittle(song.title, 20)} <span>{this.toLittle(song.author, 5)}</span></p>
                         </div> 
                     )
                 }

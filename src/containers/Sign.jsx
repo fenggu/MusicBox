@@ -68,17 +68,11 @@ class RootSign extends Component {
                   <Input addonBefore={<Icon type="lock" />} type="password" placeholder="Password" />
                 )}
               </FormItem>
-              <FormItem>
-                {getFieldDecorator('remember', {
-                  valuePropName: 'checked',
-                  initialValue: true,
-                })(
-                  <Checkbox>Remember me</Checkbox>
-                )} <br/>
+              <FormItem> 
                 <Button type="primary" htmlType="submit" className="login-form-button">
-                  Log in
-                </Button>
-                Or <a>register now!</a>
+                  注册
+                </Button> <br/>
+                Or <Link to="/login">立即登录!</Link>
               </FormItem>
             </Form>
             );

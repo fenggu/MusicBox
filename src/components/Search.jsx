@@ -66,6 +66,7 @@ const SearchInput = React.createClass({
       .map(d => <Option  key={d._id} value={this.props.getkey? d._id: d.title}>{d.title}</Option>);
     return (
       <Select
+        className={this.props.className}
         combobox
         value={this.state.value}
         placeholder={this.props.placeholder}

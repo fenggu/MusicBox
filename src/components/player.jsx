@@ -235,6 +235,8 @@ class RootPlayer extends Component {
     }
 
     getLrc (lrc) {  //解析lrc
+        console.log(lrc)
+        if (!lrc) return false
         var lyrics = lrc.split('\n');  
         var lrcObj = {} 
         lrcObj.txt = [] 
@@ -278,16 +280,22 @@ class RootPlayer extends Component {
         let { song, addlikesong } = this.props 
         let paused = audio.dom.paused
         let lrc = song.lrc 
-        let lrcObj = this.getLrc(lrc) 
-        let timer = lrcObj.time;
-        let lrctxt = lrcObj.txt
-        let currentTime = audio.currentTime 
-        var lrcgress = - parseFloat(progress) 
-        var lrcbody = this.refs.lrc 
-        if (lrcbody) { 
-            var offsetHeight = lrcbody.offsetHeight 
-            lrcgress = offsetHeight * lrcgress * 0.01 + 50
-        } 
+        if (lrc) {
+            var lrcObj = this.getLrc(lrc) 
+            var timer = lrcObj.time;
+            var lrctxt = lrcObj.txt
+            var currentTime = audio.currentTime 
+            var lrcgress = - parseFloat(progress) 
+            var lrcbody = this.refs.lrc 
+            if (lrcbody) { 
+                var offsetHeight = lrcbody.offsetHeight 
+                lrcgress = offsetHeight * lrcgress * 0.01 + 50
+            }  
+        } else {
+            var timer = ['0']
+            var lrcObj = {}
+            lrcObj['0'] = '暂无歌词'
+        }
         return (
             <div className="player-max">
                 <div className='player-main'> 
@@ -298,9 +306,11 @@ class RootPlayer extends Component {
                     </header>
                     <div className='player-lrc'>
                         <div className='lrc-body' ref="lrc" style={{top: lrcgress }}>
-                            {timer.map( (t, index) => {
+                            {   
+                               timer.map( (t, index) => {
                                 return <p key={t} className={ currentTime > t && currentTime < timer[index+1] ?"lrc-active": ""}>{lrcObj[t]}</p>
-                            })}
+                                })    
+                            }
                         </div>
                         
                     </div>
@@ -350,8 +360,8 @@ class RootPlayer extends Component {
             <div>
                 <div className={max?"hidden":"player"}>   
                     <div className="player-pic"  onClick={this.bindFuncs.toMax.bind(this)} >
-                        <img src={ song == undefined? 'http://localhost:8081/public/default.jpg': song.pic } alt=""/>
-                    </div>
+                        <img src={ !song || song.pic == undefined? 'http://localhost:8081/public/default.jpg': song.pic } alt=""/>
+                    </div> 
                     <div className="player-btn">
                         <i className="iconfont icon-xiayishou1" onClick={this.bindFuncs.next.bind(this,-1)}></i>
                         <i className={!paused ? "iconfont icon-bofang1 hidden": "iconfont icon-bofang1"} onClick={this.bindFuncs.onPlay.bind(this)}></i>

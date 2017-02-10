@@ -269,7 +269,7 @@ export function addsongActionClick (song) {
             if (!json.success) {
                 console.log(json.error)
             } else {
-                dispatch(getsonglistAction(json.data))
+                dispatch(getallsongActionClick())
                 console.log(json.data)
             }
         }).catch(function(err) {

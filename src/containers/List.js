@@ -40,8 +40,9 @@ class RootList extends Component {
     }
 
     componentWillMount() { 
-        const { getlist, getthissongs, getsongs, getlikes, gethistory, history, songs } = this.props
+        const { getlist, getthissongs, song, getsongs, getlikes, gethistory, history, songs } = this.props
         var id = this.state.id
+        console.log(this.props)
         if (id == "likes") {
             getlikes()
             return 
@@ -57,8 +58,14 @@ class RootList extends Component {
         }
         if (id == 'songs') {
             songs.title = '正在播放' 
-            songs.pic = "http://localhost:8081/public/upload/upload_b5ff438ee5fb50bcb3b5d9c8c92d5e65.png"
+            console.log(song)
+            if (song.pic) {
+                songs.pic = song.pic 
+            } else {
+                songs.pic = 'http://localhost:8081/public/default.jpg'
+            }
             getthissongs(songs)
+            return
         }
         if (id.indexOf('search') > -1) {
             var n = id.indexOf('search')
@@ -72,7 +79,6 @@ class RootList extends Component {
 
     render() {    
         var { songlist, songs, changesong, addlike, addsongs } = this.props
-        console.log(songlist) 
         var list = songlist.list  
         return ( 
             <div className="list"> 
@@ -98,6 +104,7 @@ function mapStateToProps(state) {
         user: state.user,
         songlist: state.songlist,
         songs: state.songs,
+        song: state.song,
         history: state.history
     }
 }

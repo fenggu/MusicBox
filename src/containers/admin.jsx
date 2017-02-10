@@ -192,14 +192,14 @@ class RootAdmin extends Component {
           {
             // this.getSearchInput()
           }
-          <SearchInput getkey={true} handleSelect={this.onChangeSelect().bind(this)} placeholder="搜索歌曲"/>
-
-          <Button onClick={this.onNew.bind(this)}>{this.state.isEdit? "返回": "新增"}</Button> 
-          <Button className={this.state.isList? "": "hidden"} onClick={this.onDelsonglist.bind(this)}>删除</Button> 
+          <SearchInput getkey={true}  className={this.state.isList? "": "hidden"}  handleSelect={this.onChangeSelect().bind(this)} placeholder="搜索歌曲"/>
+          <Button onClick={this.onNew.bind(this)}>{this.state.isEdit? "返回": "新增"}</Button>
+          <Button style={{float: 'right'}} className={this.state.isList? "": "hidden"} onClick={this.onDelsonglist.bind(this)} >删除此歌单</Button>    
           <Table pagination={false} className={this.state.isEdit?"hidden":''} columns={columns} dataSource={songlist.list} />
           <div className="admin-form" className={this.state.isEdit?"":'hidden'}>
             <AdminForm isList={this.state.isList} addsonglist={addsonglist} uploadsong={uploadsong}/>
           </div>
+
         </div>
       </div>
     );
