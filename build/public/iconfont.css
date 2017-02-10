@@ -1,10 +1,10 @@
 
 @font-face {font-family: "iconfont";
-  src: url('iconfont.eot?t=1484129117219'); /* IE9*/
-  src: url('iconfont.eot?t=1484129117219#iefix') format('embedded-opentype'), /* IE6-IE8 */
-  url('iconfont.woff?t=1484129117219') format('woff'), /* chrome, firefox */
-  url('iconfont.ttf?t=1484129117219') format('truetype'), /* chrome, firefox, opera, Safari, Android, iOS 4.2+*/
-  url('iconfont.svg?t=1484129117219#iconfont') format('svg'); /* iOS 4.1- */
+  src: url('iconfont.eot?t=1486708089557'); /* IE9*/
+  src: url('iconfont.eot?t=1486708089557#iefix') format('embedded-opentype'), /* IE6-IE8 */
+  url('iconfont.woff?t=1486708089557') format('woff'), /* chrome, firefox */
+  url('iconfont.ttf?t=1486708089557') format('truetype'), /* chrome, firefox, opera, Safari, Android, iOS 4.2+*/
+  url('iconfont.svg?t=1486708089557#iconfont') format('svg'); /* iOS 4.1- */
 }
 
 .iconfont {
@@ -17,19 +17,43 @@
 
 .icon-shoucang:before { content: "\e619"; }
 
+.icon-mima1:before { content: "\e61b"; }
+
+.icon-gengduo:before { content: "\e65e"; }
+
 .icon-quxiao:before { content: "\e675"; }
+
+.icon-circle-more:before { content: "\e60e"; }
+
+.icon-ttpodicon:before { content: "\e6bf"; }
 
 .icon-shoucang1:before { content: "\e60c"; }
 
+.icon-bofang:before { content: "\e614"; }
+
 .icon-yonghu:before { content: "\e61a"; }
+
+.icon-bofang1:before { content: "\e628"; }
 
 .icon-shijian:before { content: "\e624"; }
 
+.icon-iconfont67:before { content: "\e77b"; }
+
+.icon-shunxubofang:before { content: "\e6eb"; }
+
 .icon-iconfontarrleft:before { content: "\e601"; }
+
+.icon-shangyishou:before { content: "\e61f"; }
 
 .icon-mima:before { content: "\e61e"; }
 
+.icon-aixin:before { content: "\e615"; }
+
 .icon-weibiaoti1:before { content: "\e622"; }
+
+.icon-user:before { content: "\e611"; }
+
+.icon-nextvideo-copy:before { content: "\e604"; }
 
 .icon-suoyoukeshi:before { content: "\e63b"; }
 
@@ -37,5 +61,13 @@
 
 .icon-suoyougongneng:before { content: "\e714"; }
 
+.icon-xiayishou:before { content: "\e621"; }
+
+.icon-suiji2:before { content: "\e60d"; }
+
+.icon-suoxiao-copy:before { content: "\e602"; }
+
 .icon-jiantouyoujiantou-copy:before { content: "\e656"; }
+
+.icon-xiayishou1:before { content: "\e600"; }
 
