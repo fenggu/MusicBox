@@ -1,4 +1,5 @@
 import { browserHistory } from 'react-router'
+import { message } from 'antd';
 import fetch from 'isomorphic-fetch'
 /*
  * action 类型
@@ -463,10 +464,10 @@ export function addSongToListAction (songId, songlistId) {
             return response.json()
         }).then(function(json) {
             if (!json.success) {
-                console.log(json.error)
+                message.error(json.error);
             } else { 
                 dispatch(getsonglistActionClick(songlistId))
-                console.log(json.data)
+                message.success('添加成功'); 
             }
         }).catch(function(err) {
             console.log(err)
@@ -491,9 +492,12 @@ export function delSongToListAction (songId, songlistId) {
         }).then(function(json) {
             if (!json.success) {
                 console.log(json.error)
+                message.error(json.error);
+
             } else { 
-                dispatch(getsonglistActionClick(songlistId))
-                console.log(json.data)
+                dispatch(getsonglistActionClick(songlistId)) 
+                message.success('删除成功');
+
             }
         }).catch(function(err) {
             console.log(err)

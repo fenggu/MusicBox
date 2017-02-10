@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { MineBtn, TopBtn, PlayList, SearchInput } from '../components' 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux'  
+import { Link ,browserHistory } from 'react-router'; 
 import { LogoutAction, getallsongActionClick } from '../Redux/actions'
 import { Menu, Dropdown, Icon, Input } from 'antd'; 
 const Search = Input.Search;
@@ -17,11 +18,14 @@ class RootHome extends Component {
     render() {
         const { user, logout, getsongs } = this.props
 
+        function handleSelect(value) { 
+          browserHistory.push('/list/search'+ value )
+        }
         return ( 
           <div>
             <TopBtn logout={logout} user={user}/> 
-            <div style={{'textAlign':'center'}}>
-              <SearchInput placeholder="搜索歌曲"/>
+            <div style={{'textAlign': 'center'}}>
+              <SearchInput getkey={false}  handleSelect={handleSelect} placeholder="搜索歌曲"/>
             </div>
           	<MineBtn />
             <div> 

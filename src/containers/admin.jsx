@@ -1,5 +1,5 @@
 import React, { Component } from 'react'; 
-import { AdminForm } from '../components' 
+import { AdminForm, SearchInput } from '../components' 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux'  
 import { 
@@ -144,6 +144,7 @@ class RootAdmin extends Component {
         <Select className={this.state.isList? "": "hidden"}   value={this.state.value} onChange={this.onChangeSelect().bind(this)}>
           {options}
         </Select>
+
       ) 
   }
   render() {
@@ -161,10 +162,6 @@ class RootAdmin extends Component {
       title: '歌曲名称',
       dataIndex: 'title',
       key: 'title'
-    }, {
-      title: 'url',
-      dataIndex: 'url',
-      key: 'url',
     }, {
       title: '缩略图',
       dataIndex: 'pic',
@@ -192,11 +189,14 @@ class RootAdmin extends Component {
           {this.renderMenu()}
         </div>
         <div className="admin-table">  
+          {
+            // this.getSearchInput()
+          }
+          <SearchInput getkey={true} handleSelect={this.onChangeSelect().bind(this)} placeholder="搜索歌曲"/>
 
-          {this.getSearchInput()}
-          <Button onClick={this.onNew.bind(this)}>新增</Button> 
+          <Button onClick={this.onNew.bind(this)}>{this.state.isEdit? "返回": "新增"}</Button> 
           <Button className={this.state.isList? "": "hidden"} onClick={this.onDelsonglist.bind(this)}>删除</Button> 
-          <Table className={this.state.isEdit?"hidden":''} columns={columns} dataSource={songlist.list} />
+          <Table pagination={false} className={this.state.isEdit?"hidden":''} columns={columns} dataSource={songlist.list} />
           <div className="admin-form" className={this.state.isEdit?"":'hidden'}>
             <AdminForm isList={this.state.isList} addsonglist={addsonglist} uploadsong={uploadsong}/>
           </div>

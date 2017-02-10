@@ -234,7 +234,7 @@ class RootPlayer extends Component {
         this.setState({type})
     }
 
-    getLrc (lrc) { 
+    getLrc (lrc) {  //解析lrc
         var lyrics = lrc.split('\n');  
         var lrcObj = {} 
         lrcObj.txt = [] 

@@ -112,7 +112,7 @@ var getsongs = async(req, res, next) => {
     var cond = {}
     var data = {}
     data.title = '全部音乐'
-    data.id = 'all' 
+    data.id = 'all'
     var query = req.query || {}
     if (req.query.name && req.query.name != 'undefined') {
         data.title = '搜索结果'
@@ -127,9 +127,9 @@ var getsongs = async(req, res, next) => {
     if (!songs) {
         return res.json({ success: false, error: '列表为空' })
     }
-    songs.map( s => {
-        s.url = local + s.url 
-        s.pic = local + s.pic  
+    songs.map(s => {
+        s.url = local + s.url
+        s.pic = local + s.pic
         s.lrc = fs.readFileSync(dir + s.lrc).toString()
     })
     data.list = songs
@@ -145,7 +145,7 @@ var getsongsOnlyNames = async(req, res) => {
     var cond = {}
     if (req.body.name) {
         cond['title'] = { $regex: new RegExp(req.body.name), $options: 'i' }
-    } 
+    }
     var sort = { 'title': 1 }
 
     try {
@@ -176,7 +176,7 @@ var delsong = async(req, res) => {
 
     try {
         var song = await Songs.findOne(cond)
-    } catch (err) { 
+    } catch (err) {
         return res.json({ success: false, error: err })
     }
     console.log(song)
@@ -184,27 +184,27 @@ var delsong = async(req, res) => {
     var lrc = song.lrc
     var pic = song.pic
     fs.unlink(dir + mp3, function(err) {
-       if (err) {
-           return console.error(err);
-       }
-       console.log("音乐删除成功！");
+        if (err) {
+            return console.error(err);
+        }
+        console.log("音乐删除成功！");
     });
     fs.unlink(dir + lrc, function(err) {
-       if (err) {
-           return console.error(err);
-       }
-       console.log("音乐删除成功！");
+        if (err) {
+            return console.error(err);
+        }
+        console.log("音乐删除成功！");
     });
     fs.unlink(dir + pic, function(err) {
-       if (err) {
-           return console.error(err);
-       }
-       console.log("音乐删除成功！");
+        if (err) {
+            return console.error(err);
+        }
+        console.log("音乐删除成功！");
     });
 
     try {
         var song = await Songs.remove(cond)
-    } catch (err) { 
+    } catch (err) {
         return res.json({ success: false, error: err })
     }
     try {
@@ -431,11 +431,16 @@ var addsongsToSonglist = async(req, res) => {
     var body = req.body
     var songlistId = req.body.songlistId
     var songId = req.body.songId
+    try {
+
+        var songIdObj = await ObjectID(songId) 
+    } catch(err) {
+        return res.json({ success: false, error: 'id不合法' })
+    }
     if (!songId || !songlistId) {
         return res.json({ success: false, error: '缺少参数' })
     }
-    cond._id = ObjectID(songlistId)
-        // console.log(cond)
+    cond._id = ObjectID(songlistId) 
     try {
         var songlist = await Songlists.findOne(cond)
     } catch (err) {
@@ -444,8 +449,21 @@ var addsongsToSonglist = async(req, res) => {
     if (songlist == null) {
         return res.json({ success: false, error: '找不到该歌单' })
     }
+ 
+    try {
+        var song = await Songs.findOne({ _id: songIdObj })
+    } catch (err) {
+        console.log("err:"+ err)
+        return res.json({ success: false, error: err })
+    } 
+
+    if (!song) { 
+        return res.json({ success: false, error: '该id不存在' })
+    }
     if (songlist.songs.indexOf(songId) <= -1) {
         songlist.songs.unshift(songId)
+    } else {
+        return res.json({ success: false, error: '该歌曲已存在' })
     }
 
     try {
@@ -477,6 +495,8 @@ var delsongsToSonglist = async(req, res) => {
     var n = songlist.songs.indexOf(songId)
     if (n > -1) {
         songlist.songs.splice(n, 1)
+    }   else {
+        return res.json({ success: false, error: '找不到该歌曲' }) 
     }
 
     try {

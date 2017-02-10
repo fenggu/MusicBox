@@ -63,7 +63,7 @@ const SearchInput = React.createClass({
     var optionValuesMap = {}
     const options = this.state.data
       .filter(d => !optionValuesMap[d.title] && (optionValuesMap[d.title]=true))
-      .map(d => <Option  key={d._id} value={d.title}>{d.title}</Option>);
+      .map(d => <Option  key={d._id} value={this.props.getkey? d._id: d.title}>{d.title}</Option>);
     return (
       <Select
         combobox
@@ -75,8 +75,8 @@ const SearchInput = React.createClass({
         showArrow={false}
         filterOption={false}
         onChange={this.handleChange}
-        onSelect={this.handleSelect}
-        onBlur={this.handleSelect}
+        onSelect={this.props.handleSelect}
+        onBlur={this.props.handleSelect}
       >
         {options}
       </Select>
