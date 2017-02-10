@@ -25,11 +25,15 @@ class RootPlayer extends Component {
         this.state = defaultState
     } 
 
-    componentWillMount() { 
+    componentWillMount() {  
         let { song, songs, getnextsongAction } = this.props  
+        
         var index = this.state.index 
-        var _song = songs.list[index]   
-        getnextsongAction(_song) 
+        var _song = songs.list[index]  
+
+        if (!song._id) {  
+            getnextsongAction(_song) 
+        }  
     } 
 
     componentWillUpdate() {
@@ -51,9 +55,20 @@ class RootPlayer extends Component {
     }
 
     componentDidMount() {
+        let { song, songs, getnextsongAction } = this.props  
         var audio = this.refs.audio
         var audiostate = this.state.audio;
-        audiostate.dom = audio   
+        audiostate.dom = audio    
+
+        var index = this.state.index 
+        var _song = songs.list[index]  
+        if (song._id) { 
+            if (audiostate.dom.paused) { 
+                audiostate.dom.play()
+            } else {
+                return false
+            }
+        }
         this.setState({audio: audiostate})
 
     } 
