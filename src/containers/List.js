@@ -8,13 +8,12 @@ import { SongList, TopBar } from '../components'
 class RootList extends Component {
 
     defaultState = {
-        title: "defaultName"
+        title: "defaultName",
+        paused: true
     }
     constructor(props) {
-        super(props);
-        var id = this.props.params.id
-        this.state = this.defaultState
-        this.state.id = id
+        super(props); 
+        this.state = this.defaultState 
     } 
 
     toLittle(content) { //缩短字体
@@ -30,7 +29,7 @@ class RootList extends Component {
 
     isLikeList(id) {
         var { user } = this.props
-        if (this.state.id == "likes" || this.state.id == "all" || this.state.id == "history" || this.state.id == 'songs') return ""
+        if (this.props.params.id == "likes" || this.state.id == "all" || this.state.id == "history" || this.state.id == 'songs') return ""
         if (user.songlist == undefined) return "iconfont icon-weibiaoti1"
         if (user.songlist.indexOf(id) > -1) {
             return "iconfont icon-aixin"
@@ -39,10 +38,57 @@ class RootList extends Component {
         }
     }
 
+    onChangeSong(song) {
+        var { changesong, songs, addsongs } = this.props
+        var Ids = []
+        var Hids = []
+        var locallist = JSON.parse(localStorage.songs)
+        var localhistory = JSON.parse(localStorage.history)
+
+        locallist.list.map( s => {
+            Ids.push(s._id)
+        })
+
+
+        if (Ids.indexOf(song._id) <= -1) {
+            songs.list.push(song)
+            addsongs(songs) //分发到 store
+            var str = JSON.stringify(songs); 
+            localStorage.songs = str 
+        }
+        localhistory.list.map( s => {
+            Hids.push(s._id)
+        })
+        var h = Hids.indexOf(song._id) 
+        if (h <= -1) {
+            localhistory.list.unshift(song)
+            localhistory.title = "播放历史"
+            localhistory.pic = 'http://localhost:8081/public/mdl.png'
+            var str = JSON.stringify(localhistory)
+            localStorage.history = str
+        } else {
+            localhistory.list.splice(h, 1)
+            localhistory.list.unshift(song)
+            localhistory.title = "播放历史"
+            localhistory.pic = 'http://localhost:8081/public/mdl.png'
+            var str = JSON.stringify(localhistory)
+            localStorage.history = str
+        }
+        changesong(song)
+    }
+
+    playlist(){ 
+        var { songlist } = this.props
+        var list = songlist.list
+        for (var i = list.length-1; i > -1; i--) {
+            this.onChangeSong(list[i])
+        } 
+    }
+
     componentWillMount() { 
         const { getlist, getthissongs, song, getsongs, getlikes, gethistory, history, songs } = this.props
-        var id = this.state.id
-        console.log(this.props)
+        var params = this.props.params
+        var id = params.id  
         if (id == "likes") {
             getlikes()
             return 
@@ -57,8 +103,7 @@ class RootList extends Component {
             return
         }
         if (id == 'songs') {
-            songs.title = '正在播放' 
-            console.log(song)
+            songs.title = '正在播放'  
             if (song.pic) {
                 songs.pic = song.pic 
             } else {
@@ -79,6 +124,7 @@ class RootList extends Component {
 
     render() {    
         var { songlist, songs, changesong, addlike, addsongs } = this.props
+        var { paused } = this.state
         var list = songlist.list  
         return ( 
             <div className="list"> 
@@ -89,10 +135,14 @@ class RootList extends Component {
                         {songlist.title}
                         <i onClick={addlike.bind(this, songlist.id)} className={this.isLikeList(songlist.id)}></i>
                     </h1>
+                    <h2 className="play-all">
+                        播放全部
+                        <i className="iconfont icon-bofang1" onClick={this.playlist.bind(this)}></i>
+                    </h2>
                 </div>
                 <header>  
                 </header>
-                <SongList songlist={list} addsongs={addsongs} songs={songs} changesong={changesong}/>
+                <SongList songlist={list} addsongs={addsongs} songs={songs} onChangeSong={this.onChangeSong} changesong={changesong}/>
             </div>
         )
     }

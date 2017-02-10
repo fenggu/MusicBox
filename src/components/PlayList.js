@@ -8,11 +8,11 @@ class RootPlayList extends Component {
         super(props);
     } 
 
-    toLittle(content) { //缩短字体
+    toLittle(content, num) { //缩短字体
         var newcontent = ""
         if (content == undefined) return
-        if (content.length > 200) {
-            newcontent = content.slice(0, 200) + "..."
+        if (content.length > num) {
+            newcontent = content.slice(0, num) + "..."
         } else {
             newcontent = content;
         } 
@@ -34,7 +34,7 @@ class RootPlayList extends Component {
                         <Link key={index} to={ "/list/" + song._id }>
                             <div>
                                 <img src={song.pic} alt={song.title}/>
-                                <p>{song.title}</p>
+                                <p>{this.toLittle(song.title, 30)}</p>
                             </div>
                         </Link>
                     )

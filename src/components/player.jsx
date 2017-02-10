@@ -367,14 +367,13 @@ class RootPlayer extends Component {
                         <i className={!paused ? "iconfont icon-bofang1 hidden": "iconfont icon-bofang1"} onClick={this.bindFuncs.onPlay.bind(this)}></i>
                         <i className={paused ? "iconfont icon-iconfont67 hidden": "iconfont icon-iconfont67"}  onClick={this.bindFuncs.onPlay.bind(this)}></i> 
                         <i className="iconfont icon-xiayishou" onClick={this.bindFuncs.next.bind(this,1)}></i>
-
-                        <i className="iconfont icon-suoyoukeshi" onClick={ (e => {browserHistory.push('/list/songs')}).bind(this)}></i>
+                         <i className={this.isLikeSong(song ? song._id: "")} onClick={addlikesong.bind(this, song? song._id : "")}></i> 
                     </div>
                     <div className="player-type" onClick={this.bindFuncs.changePlay.bind(this)}>
                         {this.getMenu()}
                     </div>
                     <p>{song ? this.bindFuncs.toLittle(song.title): ""}
-                        <i className={this.isLikeSong(song ? song._id: "")} onClick={addlikesong.bind(this, song? song._id : "")}></i> 
+                        
                     </p>  
                     <div className="ant-progress-line" onClick={this.bindFuncs.audioSeek(0.2, 0.5).bind(this)} >
                         <div style={{width: this.state.progress}} className="progress-active"></div>

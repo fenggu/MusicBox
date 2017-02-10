@@ -7,8 +7,7 @@ function Reducer(state, action) {
         case actions.login:
             return Object.assign({}, state, { user: action.user })
 
-        case actions.next:
-            console.log(action.song)
+        case actions.next: 
             return Object.assign({}, state, { song: action.song })
 
         case actions.getmusiclist:

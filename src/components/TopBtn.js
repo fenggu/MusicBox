@@ -23,10 +23,14 @@ class TopBtn extends Component {
           </Menu>
         );
         return ( 
-            <header className="top-btn">    
-              <div>
-                <img src="" alt=""/>
-              </div>
+            <header className="top-btn">  
+              <div >
+                <span style={{border: 0}}> 
+                  <Link to="/list/songs"><i className="iconfont icon-suoyoukeshi">
+                  </i></Link>
+                </span>
+              </div>  
+              
               <div>
                 <span><Link to="/">我的</Link> </span>
                 <span><Link to="/musicbox">音乐馆</Link></span>

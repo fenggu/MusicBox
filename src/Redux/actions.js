@@ -53,8 +53,7 @@ export function adduserAction(user) { //注册
             })
         }).then(function(response) {
             return response.json()
-        }).then(function(json) {
-            console.log(json)
+        }).then(function(json) { 
             if (!json.success) {
                 alert(json.error)
             } else {
@@ -87,8 +86,7 @@ export function loginAction(user) { //登录
                 alert(json.error)
             } else {
                 dispatch(getuser(json.data))
-                browserHistory.push("/")
-                console.log(json.data)
+                browserHistory.push("/") 
             }
         }).catch(function(err) {
             console.log(err)
@@ -111,8 +109,7 @@ export function autoLoginAction() { //自动登录
             if (json.success == false) {
                 console.log(json.error)
             } else {
-                dispatch(getuser(json.data))
-                console.log(json.data)
+                dispatch(getuser(json.data)) 
             }
         }).catch(function(err) {
             console.log(err)
@@ -162,8 +159,7 @@ export function getmusiclistActionClick() {
             if (!json.success) {
                 console.log(json.error)
             } else {
-                dispatch(getmusiclistAction(json.data))
-                console.log(json.data)
+                dispatch(getmusiclistAction(json.data)) 
             }
         }).catch(function(err) {
             console.log(err)
@@ -189,8 +185,7 @@ export function getsonglistActionClick (id) {
             if (!json.success) {
                 console.log(json.error)
             } else {
-                dispatch(getsonglistAction(json.data))
-                console.log(json.data)
+                dispatch(getsonglistAction(json.data)) 
             }
         }).catch(function(err) {
             console.log(err)
@@ -213,8 +208,7 @@ export function getallsongActionClick (name) {
             if (!json.success) {
                 console.log(json.error)
             } else {
-                dispatch(getsonglistAction(json.data))
-                console.log(json.data)
+                dispatch(getsonglistAction(json.data)) 
             }
         }).catch(function(err) {
             console.log(err)
@@ -230,16 +224,14 @@ export function delallsongActionClick (id) {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
-        }).then(function(response) {
-            console.log(response)
+        }).then(function(response) { 
             return response.json()
         }).then(function(json) {
             console.log(json)
             if (!json.success) {
                 console.log(json.error)
             } else {
-                dispatch(getsonglistAction(json.data))
-                console.log(json.data)
+                dispatch(getsonglistAction(json.data)) 
             }
         }).catch(function(err) {
             console.log(err)
@@ -269,8 +261,7 @@ export function addsongActionClick (song) {
             if (!json.success) {
                 console.log(json.error)
             } else {
-                dispatch(getallsongActionClick())
-                console.log(json.data)
+                dispatch(getallsongActionClick()) 
             }
         }).catch(function(err) {
             console.log(err)
@@ -298,8 +289,7 @@ export function addsonglistActionClick (song) {
             if (!json.success) {
                 console.log(json.error)
             } else {
-                dispatch(getmusiclistActionClick())
-                console.log(json.data)
+                dispatch(getmusiclistActionClick()) 
             }
         }).catch(function(err) {
             console.log(err)
@@ -325,8 +315,7 @@ export function delsonglistActionClick (songlistId) {
             if (!json.success) {
                 console.log(json.error)
             } else {
-                dispatch(getmusiclistActionClick())
-                console.log(json.data)
+                dispatch(getmusiclistActionClick()) 
             }
         }).catch(function(err) {
             console.log(err)

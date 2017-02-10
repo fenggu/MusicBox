@@ -600,6 +600,12 @@ var addSonglistTolikes = async(req, res) => {
             return res.json({ success: false, error: err })
         }
 
+        
+        try { 
+            var songlistIdObj = await ObjectID(songlistId) 
+        } catch(err) {
+            return res.json({ success: false, error: 'id不合法' })
+        }
 
         let n = user.songlist.indexOf(songlistId)
 

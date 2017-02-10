@@ -16,8 +16,7 @@ class RootDeskTop extends Component {
       autoLogin()
     }
 
-    render() { 
-        console.log(browserHistory)
+    render() {  
         return (
             <div> 
               { this.props.children }
