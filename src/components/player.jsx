@@ -357,12 +357,15 @@ class RootPlayer extends Component {
      render() {    
         let { audio, max } = this.state 
         let { song, addlikesong } = this.props 
-        var paused = audio.dom.paused
+        var paused = audio.dom.paused  
+        var u = navigator.userAgent;
+    
+        var isiOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/); //ios终端
         return ( 
             <div>
                 <div className={max?"hidden":"player"}>   
                     <div className="player-pic"  onClick={this.bindFuncs.toMax.bind(this)} >
-                        <img src={ !song || song.pic == undefined? 'http://localhost:8081/public/default.jpg': song.pic } alt=""/>
+                        <img src={ !song || song.pic == undefined? '../public/default.jpg': song.pic } alt=""/>
                     </div> 
                     <div className="player-btn">
                         <i className="iconfont icon-xiayishou1" onClick={this.bindFuncs.next.bind(this,-1)}></i>
@@ -377,7 +380,7 @@ class RootPlayer extends Component {
                     <p>{song ? song.title: ""}
                         
                     </p>  
-                    <div className="ant-progress-line" onClick={this.bindFuncs.audioSeek(0.2, 0.5).bind(this)} >
+                    <div className={isiOS ? "ant-progress-line ant-progress-line-mobile" :"ant-progress-line"} onClick={this.bindFuncs.audioSeek(0.2, 0.5).bind(this)} >
                         <div style={{width: this.state.progress}} className="progress-active"></div>
                         <div className="progress-background"></div>
                     </div>

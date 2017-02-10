@@ -36,7 +36,7 @@ var initState = {
   history: {
     title:"播放历史",
     list: [],
-    pic: 'http://localhost:8081/public/mdl.png'
+    pic: '../public/mdl.png'
   }
 }    
 if (!localStorage.songs) {
@@ -55,7 +55,7 @@ if (!localStorage.history) {
 const logger = createLogger() 
 const createStoreWithMiddleware = applyMiddleware(
   thunk, 
-  logger
+  // logger
 )(createStore);
 
 let store = createStoreWithMiddleware(reducer,initState);

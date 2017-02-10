@@ -5,7 +5,7 @@ var formidable = require('formidable')
 var fs = require("fs");
 var path = require("path");
 var dir = "./build/" //文件上传地址
-var local = 'http://localhost:8081/'
+var local = '/'
     /*注册*/
 var createUser = async(req, res) => {
         var username = req.body['username'];
@@ -143,7 +143,7 @@ var getsongs = async(req, res, next) => {
         } 
     })
     data.list = songs
-    data.pic = 'http://localhost:8081/public/mdl.png'
+    data.pic = '../public/mdl.png'
     return res.json({ success: true, data: data })
 }
 
@@ -272,7 +272,7 @@ var addsongs = async(req, res) => {
         data.title = '全部音乐'
         data.id = 'likes'
         data.list = songs
-        data.pic = 'http://localhost:8081/public/mdl.png'
+        data.pic = '../public/mdl.png'
 
         return res.json({ success: true, data: song._id })
     }
@@ -350,7 +350,7 @@ var getlikes = async(req, res) => {
         data.list = songs
         data.title = '我的收藏'
         data.id = 'likes'
-        data.pic = 'http://localhost:8081/public/mdl.png'
+        data.pic = '../public/mdl.png'
         return res.json({ success: true, data: data })
     }
     /* 获取歌单 通过songlist的id来查找 songs并且返回

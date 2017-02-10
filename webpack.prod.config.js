@@ -1,5 +1,4 @@
 'use strict';
-
 var path = require('path');
 var webpack = require('webpack');
 var uglifyJsPlugin = webpack.optimize.UglifyJsPlugin;
@@ -10,8 +9,7 @@ var ExtractTextPlugin = require("extract-text-webpack-plugin");
 
 module.exports = {
     entry: [
-      path.resolve(__dirname, 'src/index.js'), 
-      
+      path.resolve(__dirname, 'src/index.js'),  
     ],
     output: {
         path: path.resolve(__dirname, 'build'),

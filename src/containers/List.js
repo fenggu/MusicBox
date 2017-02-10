@@ -64,14 +64,14 @@ class RootList extends Component {
         if (h <= -1) {
             localhistory.list.unshift(song)
             localhistory.title = "播放历史"
-            localhistory.pic = 'http://localhost:8081/public/mdl.png'
+            localhistory.pic = '../public/mdl.png'
             var str = JSON.stringify(localhistory)
             localStorage.history = str
         } else {
             localhistory.list.splice(h, 1)
             localhistory.list.unshift(song)
             localhistory.title = "播放历史"
-            localhistory.pic = 'http://localhost:8081/public/mdl.png'
+            localhistory.pic = '../public/mdl.png'
             var str = JSON.stringify(localhistory)
             localStorage.history = str
         }
@@ -108,7 +108,7 @@ class RootList extends Component {
             if (song.pic) {
                 songs.pic = song.pic 
             } else {
-                songs.pic = 'http://localhost:8081/public/default.jpg'
+                songs.pic = '../public/default.jpg'
             }
             getthissongs(songs)
             return
