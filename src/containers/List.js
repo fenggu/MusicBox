@@ -137,7 +137,7 @@ class RootList extends Component {
                         <i onClick={addlike.bind(this, songlist.id)} className={this.isLikeList(songlist.id)}></i>
                     </h1>
                     <h2 className="play-all">
-                        播放全部
+                        添加到播放列表
                         <i className="iconfont icon-bofang1" onClick={this.playlist.bind(this)}></i>
                     </h2>
                 </div>
