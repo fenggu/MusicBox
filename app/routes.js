@@ -20,8 +20,7 @@ app.get('/user/likelist', userController.getPlaylist)
 
 app.post('/songtitles', userController.getsongsOnlyNames)
 
-app.get('/songs', userController.getsongs)
-app.get('/songs/:id', userController.delsong)
+app.get('/songs', userController.getsongs) 
 app.post('/songs', userController.addsongs)
 app.delete('/songs/:id', userController.delsong)
 
