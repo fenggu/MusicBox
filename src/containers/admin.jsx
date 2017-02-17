@@ -2,9 +2,12 @@ import React, { Component } from 'react';
 import { AdminForm, SearchInput } from '../components' 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux'  
+import { browserHistory } from 'react-router'
+
 import { 
   delSongToListAction, 
   addsongActionClick, 
+  LogoutAction,
   addSongToListAction,  
   delallsongActionClick, 
   getmusiclistActionClick, 
@@ -35,6 +38,12 @@ class RootAdmin extends Component {
   }
 
   componentWillMount() {
+    var { user } = this.props
+    console.log(user)
+    if (!user.loggedIn) {
+      browserHistory.push('/admin/login')
+      return
+    }
     this.props.getmusiclist()
     this.props.getsongs()
     this.getOptions()
@@ -55,8 +64,7 @@ class RootAdmin extends Component {
     const { addsongtolist, getlist } = this.props
     var isEdit = this.state.isEdit
     var isList = this.state.isList
-    if (isList) {
-      console.log(this.state)
+    if (isList) { 
       var value = this.state.value 
       var songlistId = this.state.songlistId
       addsongtolist(value, songlistId)
@@ -149,7 +157,16 @@ class RootAdmin extends Component {
   }
   render() {
     var {isList, songlistId} = this.state
-    var { musiclist, songlist, addsonglist, delsong, getlist, delsongtolist, uploadsong } = this.props 
+    var { user, logout, musiclist, songlist, addsonglist, delsong, getlist, delsongtolist, uploadsong } = this.props 
+    
+    const menu = (
+      <Menu>
+        <Menu.Item>
+          <span onClick={logout}>退出登录</span>   
+        </Menu.Item> 
+      </Menu>
+    );
+
     function deletesong(songId) {
       if (isList) {
         delsongtolist(songId, songlistId)
@@ -158,6 +175,7 @@ class RootAdmin extends Component {
         delsong(songId)
       }
     }
+
     const columns = [{
       title: '歌曲名称',
       dataIndex: 'title',
@@ -171,6 +189,10 @@ class RootAdmin extends Component {
       title: '作者',
       dataIndex: 'author',
       key: 'author', 
+    }, {
+      title: '上传者',
+      dataIndex: 'username',
+      key: 'username', 
     }, {
       title: 'Action',
       key: 'key',
@@ -188,16 +210,53 @@ class RootAdmin extends Component {
         <div className="admin-menu">
           {this.renderMenu()}
         </div>
-        <div className="admin-table">  
-          {
-            // this.getSearchInput()
-          }
-          <SearchInput getkey={true}  className={this.state.isList? "": "hidden"}  handleSelect={this.onChangeSelect().bind(this)} placeholder="搜索歌曲"/>
-          <Button onClick={this.onNew.bind(this)}>{this.state.isEdit? "返回": "新增"}</Button>
-          <Button style={{float: 'right'}} className={this.state.isList? "": "hidden"} onClick={this.onDelsonglist.bind(this)} >删除此歌单</Button>    
-          <Table pagination={false} className={this.state.isEdit?"hidden":''} columns={columns} dataSource={songlist.list} />
+        <div className="admin-table">   
+          <header className='admin-header'> 
+            <SearchInput 
+              getkey={true}  
+              className={this.state.isList? "": "hidden"}  
+              handleSelect={this.onChangeSelect().bind(this)} 
+              placeholder="搜索歌曲"
+            />
+
+            <Button 
+              onClick={this.onNew.bind(this)}
+            >
+              {this.state.isEdit? "返回": "新增"}
+            </Button>
+            
+            <span className="admin-dropdown" style={{float: 'right'}}>
+              <Dropdown overlay={menu} trigger={['click']}>
+                  <a className="ant-dropdown-link" href="#">
+                    {user.username} <Icon type="down" />
+                  </a> 
+              </Dropdown> 
+            </span>
+
+            <Button 
+              style={{float: 'right'}} 
+              className={this.state.isList? "": "hidden"} 
+              type="dashed" 
+              onClick={this.onDelsonglist.bind(this)} 
+            >
+              删除此歌单
+            </Button> 
+          </header>
+ 
+
+          <Table 
+            pagination={false} 
+            className={this.state.isEdit?"hidden":''} 
+            columns={columns} 
+            dataSource={songlist.list} 
+          />
           <div className="admin-form" className={this.state.isEdit?"":'hidden'}>
-            <AdminForm isList={this.state.isList} addsonglist={addsonglist} uploadsong={uploadsong}/>
+            <AdminForm
+             user={this.props.user} 
+             isList={this.state.isList} 
+             addsonglist={addsonglist} 
+             uploadsong={uploadsong}
+            />
           </div>
 
         </div>
@@ -225,7 +284,8 @@ function mapDispatchToProps(dispatch) {
     delsong: delallsongActionClick,
     uploadsong: addsongActionClick,
     addsonglist: addsonglistActionClick,
-    delsonglist: delsonglistActionClick
+    delsonglist: delsonglistActionClick,
+    logout: LogoutAction
   }, dispatch)
 }
 

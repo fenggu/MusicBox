@@ -2,7 +2,7 @@ import { browserHistory } from 'react-router'
 import { message } from 'antd';
 import fetch from 'isomorphic-fetch'
 /*
- * action 类型
+ * action actionType类型
  */
 export const next = 'next'; //下一首
 
@@ -23,7 +23,7 @@ export const addsongs = 'addsongs'; //添加song到localstorge
 export const getallsongs = 'getallsongs';
 export const uploadsong = 'uploadsong'; //添加song到localstorge
 /*
- * action 创建函数
+ * action actionCreator 创建函数
  */
 export function gethistoryAction(list) {
     return { type: gethistory, list: list}
@@ -55,7 +55,7 @@ export function adduserAction(user) { //注册
             return response.json()
         }).then(function(json) { 
             if (!json.success) {
-                alert(json.error)
+                message.error(json.error)
             } else {
                 //dispatch(getuser(json.data))
                 browserHistory.push("/login")
@@ -83,10 +83,10 @@ export function loginAction(user) { //登录
             return response.json()
         }).then(function(json) {
             if (!json.success) {
-                alert(json.error)
+                message.error(json.error)
             } else {
                 dispatch(getuser(json.data))
-                browserHistory.push("/") 
+                // browserHistory.push("/") 
             }
         }).catch(function(err) {
             console.log(err)
@@ -133,7 +133,6 @@ export function LogoutAction() { //退出登录
                 console.log(json.error)
             } else {
                 dispatch(getuser(json.data))  
-
                 window.location.reload();
             }
         }).catch(function(err) {
@@ -220,6 +219,8 @@ export function delallsongActionClick (id) {
     return dispatch => {
         return fetch('/v1/songs/' + id, {
             method: 'delete',
+
+            credentials: 'include', //配置cookie来获取session
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
@@ -229,9 +230,10 @@ export function delallsongActionClick (id) {
         }).then(function(json) {
             console.log(json)
             if (!json.success) {
-                console.log(json.error)
+                message.error(json.error)
             } else {
                 dispatch(getallsongActionClick()) 
+                message.success('删除成功');
             }
         }).catch(function(err) {
             console.log(err)
@@ -253,13 +255,14 @@ export function addsongActionClick (song) {
                 url: song.url,
                 author: song.author,
                 pic: song.pic,
-                lrc: song.lrc
+                lrc: song.lrc,
+                username: song.username
             })
         }).then(function(response) {
             return response.json()
         }).then(function(json) {
             if (!json.success) {
-                console.log(json.error)
+                message.error(json.error)
             } else {
                 dispatch(getallsongActionClick()) 
             }
@@ -279,9 +282,9 @@ export function addsonglistActionClick (song) {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({ 
-                title: song.title, 
-                author: song.author,
-                pic: song.pic
+                title: song.title,  
+                pic: song.pic,
+                type: song.type
             })
         }).then(function(response) {
             return response.json()
@@ -340,7 +343,7 @@ export function addlikesongActionClick(id) { //添加收藏
             return response.json()
         }).then(function(json) { 
             if (!json.success) {
-                alert(json.error)
+                message.error(json.error)
             } else { 
                 dispatch(getuser(json.data))
             }

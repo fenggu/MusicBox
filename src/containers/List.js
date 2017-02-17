@@ -104,11 +104,11 @@ class RootList extends Component {
             return
         }
         if (id == 'songs') {
-            songs.title = '正在播放'  
+            songs.title = '正在播放' 
+            songs.pic = '../public/default.jpg'
+            if (!song) return 
             if (song.pic) {
                 songs.pic = song.pic 
-            } else {
-                songs.pic = '../public/default.jpg'
             }
             getthissongs(songs)
             return

@@ -63,6 +63,7 @@ class RootPlayer extends Component {
         this.setState({audio: audiostate})
 
     } 
+    
     bindFunc() {
         this.bindFuncNames = ['getTime', 'toMax', 'onPlay', 'getProgress', 'toLittle', 'audioSeek', 'next', 'changePlay']
         this.bindFuncs = {}
@@ -77,7 +78,7 @@ class RootPlayer extends Component {
     }
 
     audioSeek(left, width) { //跳转
-        return e => {
+        return e => {  
             var leftLength = document.body.clientWidth * left
             var offsetWidth = document.body.clientWidth * width
             var audio = this.state.audio 

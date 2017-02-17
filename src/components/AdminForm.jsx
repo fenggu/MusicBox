@@ -20,19 +20,23 @@ class RootLogin extends Component {
   }
 
   handleSubmit(state) { 
-    var { uploadsong, addsonglist } = this.props
+    var { uploadsong, addsonglist, user } = this.props
     var isList = this.state.isList
     this.props.form.validateFields((err, values) => {
       if (!err) {
         state.title = values.title;
         state.author = values.author
+
         if (isList == 'list') {
           state.url = ""
-          state.lrc = ""
+          state.lrc = "" 
+          state.type = values.type
+          state.username = user.username
           addsonglist(state)
         } 
 
-        if (isList == 'song') {
+        if (isList == 'song') { 
+          state.username = user.username
           uploadsong(state) 
         }
         console.log('Received values of form: ', state);
@@ -93,7 +97,7 @@ class RootLogin extends Component {
       },
       defaultFileList: [],
     };
-    const { getFieldDecorator } = this.props.form; 
+    const { getFieldDecorator } = this.props.form;  
     var onChangeSelect = this.onChangeSelect().bind(this)
     return (
       <div>
@@ -112,13 +116,31 @@ class RootLogin extends Component {
             )}
           </FormItem>
           <FormItem
+
+            className={state.isList=="list"? "hidden":""}
             {...formItemLayout}>
-            {getFieldDecorator('author', {
-              rules: [{ required: true, message: 'Please input your Password!' }],
+            {getFieldDecorator('author', { 
             })(
               <Input addonBefore={<Icon type="user" />} placeholder="author" />
             )}
           </FormItem>
+          
+
+          <FormItem
+            className={state.isList=="list"? "":"hidden"}
+            {...formItemLayout}>
+            {getFieldDecorator('type', {
+              rules: [{ required: true, message: 'Please choose your type!' }],
+            })(
+              <Select style={{ width: 120 }}>
+                <Option value="acg">ACG</Option>
+                <Option value="classic">古典</Option>
+                <Option value="absolute">纯音乐</Option>
+                <Option initialValue="popular" value="popular">流行音乐</Option>
+              </Select>
+            )}
+          </FormItem>
+
 
           <FormItem
             {...formItemLayout}

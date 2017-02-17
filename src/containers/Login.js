@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router';
+import { Link, browserHistory } from 'react-router';
+
 import { loginAction } from '../Redux/actions.js'
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux'
@@ -34,13 +35,20 @@ class RootLogin extends Component {
           handleLogin(user)
         }) 
     }
+
+    componentWillReceiveProps(nextProps) { 
+      if (nextProps.user.loggedIn) {
+        browserHistory.push('/')
+      }
+    }
+
     render() {   
 
         const { getFieldProps, getFieldDecorator } = this.props.form;
         var { user } = this.state   
 
         return ( 
-            <Form onSubmit={this.handleSubmit} className="login-form">
+            <Form onSubmit={this.handleSubmit} className="login-form login-form-m ">
               <TopBar title="登录"></TopBar>
               <FormItem>
                 {getFieldDecorator('username', {
@@ -69,7 +77,9 @@ class RootLogin extends Component {
 
 function mapStateToProps(state) {
     // 这里拿到的state就是store里面给的state
-    return {}
+    return {
+      user: state.user
+    }
 }
 
 function mapDispatchToProps(dispatch) {

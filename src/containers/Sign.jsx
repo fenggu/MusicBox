@@ -45,7 +45,7 @@ class RootSign extends Component {
         var { user } = this.state   
 
         return ( 
-            <Form onSubmit={this.handleSubmit} className="login-form">
+            <Form onSubmit={this.handleSubmit} className="login-form  login-form-m ">
               <TopBar title="注册"></TopBar>
               <FormItem>
                 {getFieldDecorator('username', {

@@ -173,10 +173,10 @@ var getsongsOnlyNames = async(req, res) => {
 }
 
 var delsong = async(req, res) => {
-    // var sess = req.session;
-    // if (!sess.loggedIn) {
-    //     return res.json({ success: false, error: '请先登录, 暂无播放列表' })
-    // }
+    var sess = req.session;
+    if (!sess.loggedIn) {
+        return res.json({ success: false, error: '请先登录!' })
+    }
     var cond = {}
     var id = req.params.id 
     if (req.params.id) {
@@ -190,7 +190,11 @@ var delsong = async(req, res) => {
     } catch (err) {
         return res.json({ success: false, error: err })
     } 
-
+    if (song.username) {
+        if (song.username !== sess.username && sess.username !== "administrator") {
+            return res.json({ success: false, error: '您无权删除别人上传的音乐!' })
+        }
+    }
     var users = await Users.find({ likes: id }).toArray()
 
     if (users){
@@ -235,45 +239,26 @@ var delsong = async(req, res) => {
 }
 
 var addsongs = async(req, res) => {
-        var sess = req.session;
-        var cond = {}
-        console.log(req.body)
-        var fields = ['title', 'author', 'url', 'pic', 'lrc']
-        var title = req.body['title'];
-        var author = req.body['author'];
-        var url = req.body['url'];
-        var pic = req.body['pic'];
-        var lrc = req.body['lrc'];
+        var sess = req.session
+        if (!sess.loggedIn) {
+            return res.json({ success: false, error: '请先登录' })
+        }
+        var cond = {} 
+        var fields = ['title', 'author', 'url', 'pic', 'lrc', 'username']
         var data = {}
         fields.map(function(f) {
             var v = req.body[f];
             if (req.body[f])
                 data[f] = v;
         }); 
-
+        data.createdAt = new Date()
+        console.log(data)
         try {
            var song =  await Songs.insert(data)
         } catch (err) {
             console.error(err)
             return res.json({ success: false, error: '创建失败：' + err })
-        }
-
-
-        try {
-            var songs = await Songs.find(cond).toArray()
-        } catch (err) {
-            return res.json({ success: false, error: err })
-        }
-        if (!songs) {
-            return res.json({ success: false, error: '列表为空' })
-        }
-
-        var data = {}
-        data.title = '全部音乐'
-        data.id = 'likes'
-        data.list = songs
-        data.pic = '../public/mdl.png'
-
+        } 
         return res.json({ success: true, data: song._id })
     }
     /* 获取我的歌单列表 一个歌单一个对象
@@ -296,6 +281,9 @@ var getPlaylist = async(req, res) => {
         return res.json({ success: false, error: err })
     }
     var Ids = []
+    if (!songlistIds) { 
+        return res.json({ success: false, error: '列表为空' })
+    }
     songlistIds.map(i => {
         Ids.push(ObjectID(i))
     })
@@ -397,6 +385,11 @@ var getSonglist = async(req, res) => {
 
 var delSonglist = async(req, res) => {
 
+    var sess = req.session;
+    if (!sess.loggedIn) {
+        return res.json({ success: false, error: '请先登录!' })
+    }
+
     var cond = {}
     var id = req.body.songlistId
     if (req.body.songlistId) {
@@ -407,6 +400,13 @@ var delSonglist = async(req, res) => {
 
     var users = await Users.find({ songlist: id }).toArray()
     var songlist = await Songlists.findOne(cond)
+
+    if (songlist.username) {
+        if (songlist.username !== sess.username && sess.username !== "administrator") {
+            return res.json({ success: false, error: '您无权删除别人创建的列表!' })
+        }
+    }
+
     if (users){
         for (let i = 0; i < users.length; i++) {
             var a = users[i] 
@@ -436,14 +436,23 @@ var delSonglist = async(req, res) => {
 }
 
 var createSonglist = async(req, res) => {
+    console.log(req.body)
     var title = req.body['title'];
     var songs = []
     var pic = req.body['pic']
+    var type = req.body['type']
+    var sess = req.session
+    if (!sess.loggedIn) {
+        return res.json({ success: false, error: '请先登录' })
+    }
 
     var data = {
         title: title,
         songs: [],
         pic: pic,
+        type: type,
+        createdAt: new Date(),
+        username: sess.username
     };
     try {
         var userCheck = await Songlists.findOne({ 'title': title })
@@ -550,7 +559,7 @@ var delsongsToSonglist = async(req, res) => {
 var getMusiclist = async(req, res) => {
     var cond = {}
     try {
-        var songlists = await Songlists.find(cond, { songs: 0 }).toArray()
+        var songlists = await Songlists.find(cond, { songs: 0 }).sort({'createdAt': -1}).toArray()
     } catch (err) {
         return res.json({ success: false, error: err })
     }

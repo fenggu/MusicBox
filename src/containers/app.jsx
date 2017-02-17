@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Router, Route, browserHistory, Link ,IndexRoute, Redirect} from 'react-router';
-import { Home, List, DeskTop, About, Login, Sign, MusicBox, Admin } from './index.js' 
+import { Home, List, DeskTop, AdminDeskTop, About, Login, Sign, MusicBox, Admin, AdminLogin } from './index.js' 
 import { Provider, connect } from 'react-redux'; 
 import thunk from 'redux-thunk'
 import createLogger from 'redux-logger'
@@ -55,7 +55,7 @@ if (!localStorage.history) {
 const logger = createLogger() 
 const createStoreWithMiddleware = applyMiddleware(
   thunk, 
-  // logger
+  logger
 )(createStore);
 
 let store = createStoreWithMiddleware(reducer,initState);
@@ -80,8 +80,9 @@ class App extends Component {
                 <Route path="/sign" component={ Sign }/>   
                 <Route path="/about" component={ About }/>   
               </Route> 
-              <Route path="/admin" component={ Admin }>
-                
+              <Route path="/admin" component={ AdminDeskTop }>
+                <IndexRoute component={ Admin }/> 
+                <Route path='login' component={ AdminLogin } />
               </Route>
             </Router>  
           </div>

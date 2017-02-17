@@ -21,8 +21,7 @@ class RootDeskTop extends Component {
       var pathname = this.props.location.pathname
       return (
           <div> 
-            { this.props.children } 
-            { pathname.indexOf('admin')>-1 ? "": <Player /> }
+            { this.props.children }  
           </div>
       );
     }
