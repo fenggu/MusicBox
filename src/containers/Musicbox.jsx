@@ -20,24 +20,24 @@ class RootMusicBox extends Component {
     }
     render() {
 
-        function filtertime (element, index, array) {
+        function filtersix (element, index, array) {
           return (index < 6)
         }
 
         function filterAcg (element, index, array) {
-          return (element.type == 'acg' && index < 6)
+          return (element.type == 'acg')
         }
 
         function filterPop (element, index, array) {
-          return (element.type == 'popular' && index < 6)
+          return (element.type == 'popular')
         }
 
         function filterClass (element, index, array) {
-          return (element.type == 'classic' && index < 6)
+          return (element.type == 'classic')
         }
 
         function filterAbs (element, index, array) {
-          return (element.type == 'absolute' && index < 6)
+          return (element.type == 'absolute')
         }
 
         const { user, musiclist } = this.props 
@@ -50,7 +50,7 @@ class RootMusicBox extends Component {
                     <span>新单速递</span>
                   </h3>
                   {
-                    musiclist.list.filter(filtertime).map( (s, index) => {
+                    musiclist.list.filter(filtersix).map( (s, index) => {
                       return ( 
                         <Link to={"/list/" + s._id}  key={s._id}>
                           <div className="list-child" >
@@ -68,7 +68,7 @@ class RootMusicBox extends Component {
                     <span>ACG</span>
                   </h3>
                   {
-                    musiclist.list.filter(filterAcg).map( (s, index) => {
+                    musiclist.list.filter(filterAcg).filter(filtersix).map( (s, index) => {
                       return ( 
                         <Link to={"/list/" + s._id}  key={s._id}>
                           <div className="list-child" >
@@ -87,7 +87,7 @@ class RootMusicBox extends Component {
                     <span>流行音乐</span>
                   </h3>
                   {
-                    musiclist.list.filter(filterPop).map( (s, index) => {
+                    musiclist.list.filter(filterPop).filter(filtersix).map( (s, index) => {
                       return ( 
                         <Link to={"/list/" + s._id}  key={s._id}>
                           <div className="list-child" >
@@ -106,7 +106,7 @@ class RootMusicBox extends Component {
                     <span>纯音乐</span>
                   </h3>
                   {
-                    musiclist.list.filter(filterAbs).map( (s, index) => {
+                    musiclist.list.filter(filterAbs).filter(filtersix).map( (s, index) => {
                       return ( 
                         <Link to={"/list/" + s._id}  key={s._id}>
                           <div className="list-child" >
@@ -124,7 +124,7 @@ class RootMusicBox extends Component {
                     <span>古典乐</span>
                   </h3>
                   {
-                    musiclist.list.filter(filterClass).map( (s, index) => {
+                    musiclist.list.filter(filterClass).filter(filtersix).map( (s, index) => {
                       return ( 
                         <Link to={"/list/" + s._id}  key={s._id}>
                           <div className="list-child" >
