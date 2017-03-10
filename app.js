@@ -8,8 +8,7 @@ var MongoStore = require('connect-mongo')(session);
 var MongoClient = require('mongodb').MongoClient;
 var cookieParser = require('cookie-parser'); 
 global.ObjectID = require('mongodb').ObjectID;
-
-
+const EventEmitter = require('events');
 
 global._ = require('lodash');
 
@@ -66,3 +65,4 @@ MongoClient.connect('mongodb://localhost:27017/' + dbn, function(err, instance) 
 
     });
 });
+  

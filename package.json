@@ -98,6 +98,7 @@
     "file-loader": "^0.8.5",
     "formidable": "^1.1.1",
     "html-webpack-plugin": "^2.10.0",
+    "immutable": "^3.8.1",
     "imports-loader": "^0.7.0",
     "isomorphic-fetch": "^2.2.1",
     "jasmine": "^2.5.2",
