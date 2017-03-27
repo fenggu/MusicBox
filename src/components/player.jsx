@@ -387,7 +387,7 @@ class RootPlayer extends Component {
                     <p>{song ? song.title: ""}
                         
                     </p>  
-                    <div className={isiOS ? "ant-progress-line ant-progress-line-mobile" :"ant-progress-line"} onClick={this.bindFuncs.audioSeek(0.2, 0.5).bind(this)} >
+                    <div className="ant-progress-line" onClick={this.bindFuncs.audioSeek(0.2, 0.5).bind(this)} >
                         <div style={{width: this.state.progress}} className="progress-active"></div>
                         <div className="progress-background"></div>
                     </div>
