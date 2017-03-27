@@ -730,7 +730,12 @@ var getlocalSong = (song) => {
             song.pic = local + song.pic
         }
     if (song.lrc) {
-        song.lrc = fs.readFileSync(dir + song.lrc).toString()
+        try {
+            song.lrc = fs.readFileSync(dir + song.lrc).toString()
+        } catch (e) {
+            console.log(e)
+            song.lrc = '服务器错误！'
+        }
     } 
     return song
 }
