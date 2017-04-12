@@ -264,6 +264,7 @@ export function addsongActionClick (song) {
             if (!json.success) {
                 message.error(json.error)
             } else {
+                message.success('上传成功！ ')
                 dispatch(getallsongActionClick()) 
             }
         }).catch(function(err) {
@@ -292,6 +293,7 @@ export function addsonglistActionClick (song) {
             if (!json.success) {
                 console.log(json.error)
             } else {
+                message.success('添加成功！ ')
                 dispatch(getmusiclistActionClick()) 
             }
         }).catch(function(err) {
@@ -319,6 +321,7 @@ export function delsonglistActionClick (songlistId) {
                 console.log(json.error)
             } else {
                 dispatch(getmusiclistActionClick())  
+                dispatch(getsonglistActionClick(songlistId)) 
                 message.success('删除成功');
             }
         }).catch(function(err) {

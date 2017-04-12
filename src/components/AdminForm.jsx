@@ -110,7 +110,6 @@ class RootLogin extends Component {
           <FormItem 
             {...formItemLayout}>
             {getFieldDecorator('title', {
-              rules: [{ required: true, message: 'Please input your username!' }],
             })(
               <Input addonBefore={<Icon type="caret-right" />} placeholder="title" />
             )}
@@ -130,7 +129,6 @@ class RootLogin extends Component {
             className={state.isList=="list"? "":"hidden"}
             {...formItemLayout}>
             {getFieldDecorator('type', {
-              rules: [{ required: true, message: 'Please choose your type!' }],
             })(
               <Select style={{ width: 120 }}>
                 <Option value="acg">ACG</Option>
