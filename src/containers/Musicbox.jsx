@@ -1,10 +1,10 @@
-import React, { Component } from 'react'; 
+import React, { Component } from 'react';
 import { MineBtn, TopBtn, PlayList } from '../components'
 import { Input } from 'antd';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux'   
-import { Link } from 'react-router'; 
-import { Menu, Dropdown, Icon } from 'antd'; 
+import { bindActionCreators } from 'redux'
+import { Link } from 'react-router';
+import { Menu, Dropdown, Icon } from 'antd';
 import { getmusiclistActionClick } from '../Redux/actions'
 const Search = Input.Search;
 
@@ -15,13 +15,13 @@ class RootMusicBox extends Component {
 
     componentWillMount() {
       const { getmusiclist } = this.props
-      getmusiclist() 
+      getmusiclist()
 
     }
     render() {
 
         function filtersix (element, index, array) {
-          return (index < 6)
+          return true
         }
 
         function filterAcg (element, index, array) {
@@ -40,61 +40,62 @@ class RootMusicBox extends Component {
           return (element.type == 'absolute')
         }
 
-        const { user, musiclist } = this.props 
-        return ( 
+        const { user, musiclist } = this.props
+        console.log(musiclist)
+        return (
           <div>
-            <TopBtn user = {user}/> 
-            <div className="music-list">  
+            <TopBtn user = {user}/>
+            <div className="music-list">
               <div>
                   <h3 className="list-title">
                     <span>新单速递</span>
                   </h3>
                   {
                     musiclist.list.filter(filtersix).map( (s, index) => {
-                      return ( 
+                      return (
                         <Link to={"/list/" + s._id}  key={s._id}>
                           <div className="list-child" >
                             <img src={s.pic} alt=""/>
                             <h3>{s.title}</h3>
                           </div>
-                        </Link> 
+                        </Link>
                         )
                     })
                   }
               </div>
-              
+
               <div>
                   <h3 className="list-title">
                     <span>ACG</span>
                   </h3>
                   {
                     musiclist.list.filter(filterAcg).filter(filtersix).map( (s, index) => {
-                      return ( 
+                      return (
                         <Link to={"/list/" + s._id}  key={s._id}>
                           <div className="list-child" >
                             <img src={s.pic} alt=""/>
                             <h3>{s.title}</h3>
                           </div>
-                        </Link> 
+                        </Link>
                         )
                     })
                   }
               </div>
-              
-              
+
+
               <div>
                   <h3 className="list-title">
                     <span>流行音乐</span>
                   </h3>
                   {
                     musiclist.list.filter(filterPop).filter(filtersix).map( (s, index) => {
-                      return ( 
+                      return (
                         <Link to={"/list/" + s._id}  key={s._id}>
                           <div className="list-child" >
                             <img src={s.pic} alt=""/>
                             <h3>{s.title}</h3>
                           </div>
-                        </Link> 
+                        </Link>
                         )
                     })
                   }
@@ -107,17 +108,17 @@ class RootMusicBox extends Component {
                   </h3>
                   {
                     musiclist.list.filter(filterAbs).filter(filtersix).map( (s, index) => {
-                      return ( 
+                      return (
                         <Link to={"/list/" + s._id}  key={s._id}>
                           <div className="list-child" >
                             <img src={s.pic} alt=""/>
                             <h3>{s.title}</h3>
                           </div>
-                        </Link> 
+                        </Link>
                         )
                     })
                   }
-              </div> 
+              </div>
 
               <div>
                   <h3 className="list-title">
@@ -125,13 +126,13 @@ class RootMusicBox extends Component {
                   </h3>
                   {
                     musiclist.list.filter(filterClass).filter(filtersix).map( (s, index) => {
-                      return ( 
+                      return (
                         <Link to={"/list/" + s._id}  key={s._id}>
                           <div className="list-child" >
                             <img src={s.pic} alt=""/>
                             <h3>{s.title}</h3>
                           </div>
-                        </Link> 
+                        </Link>
                         )
                     })
                   }
@@ -143,15 +144,15 @@ class RootMusicBox extends Component {
     }
 }
 
-function mapStateToProps(state) { 
-    return { 
+function mapStateToProps(state) {
+    return {
       user: state.user,
       musiclist: state.musiclist
     }
 }
 
 function mapDispatchToProps(dispatch) {
-    return bindActionCreators({   
+    return bindActionCreators({
       getmusiclist: getmusiclistActionClick
     }, dispatch)
 }
@@ -161,4 +162,4 @@ let MusicBox = connect(
     mapDispatchToProps
 )(RootMusicBox);
 export { RootMusicBox }
-export default  MusicBox 
+export default  MusicBox
