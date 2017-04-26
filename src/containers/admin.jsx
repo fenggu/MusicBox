@@ -1,19 +1,19 @@
-import React, { Component } from 'react'; 
-import { AdminForm, SearchInput } from '../components' 
+import React, { Component } from 'react';
+import { AdminForm, SearchInput } from '../components'
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux'  
+import { bindActionCreators } from 'redux'
 import { browserHistory } from 'react-router'
 
-import { 
-  delSongToListAction, 
-  addsongActionClick, 
+import {
+  delSongToListAction,
+  addsongActionClick,
   LogoutAction,
-  addSongToListAction,  
-  delallsongActionClick, 
-  getmusiclistActionClick, 
-  getsonglistActionClick, 
-  getallsongActionClick,  
-  addsonglistActionClick, 
+  addSongToListAction,
+  delallsongActionClick,
+  getmusiclistActionClick,
+  getsonglistActionClick,
+  getallsongActionClick,
+  addsonglistActionClick,
   addsongsAction,
   delsonglistActionClick
 } from '../Redux/actions'
@@ -29,7 +29,7 @@ class RootAdmin extends Component {
     super(props);
 
     var defaultState = {
-      isEdit: false, 
+      isEdit: false,
       isList: false,
       data: [],
       value: ''
@@ -47,7 +47,7 @@ class RootAdmin extends Component {
     this.props.getmusiclist()
     this.props.getsongs()
     this.getOptions()
-  }  
+  }
 
   handleClick = e => {
     let { getlist, getsongs } = this.props
@@ -58,26 +58,26 @@ class RootAdmin extends Component {
     }
     this.setState({isEdit: false})
     this.setState({isList: true,  songlistId: e.key})
-    getlist(e.key) 
+    getlist(e.key)
   }
   onNew = e => {
     const { addsongtolist, getlist } = this.props
     var isEdit = this.state.isEdit
     var isList = this.state.isList
-    if (isList) { 
-      var value = this.state.value 
+    if (isList) {
+      var value = this.state.value
       var songlistId = this.state.songlistId
       addsongtolist(value, songlistId)
-      // getlist(songlistId) 
-      return 
+      // getlist(songlistId)
+      return
     }
     this.setState({isEdit: !isEdit})
   }
   onDelsonglist = e => {
     const { delsonglist } = this.props
-    var isList = this.state.isList 
+    var isList = this.state.isList
     if(isList) {
-      var songlistId = this.state.songlistId 
+      var songlistId = this.state.songlistId
       delsonglist(songlistId)
     }
   }
@@ -86,8 +86,8 @@ class RootAdmin extends Component {
     this.setState({data: data})
   }
 
-  onChangeSelect() { 
-    return e => { 
+  onChangeSelect() {
+    return e => {
       this.setState({value: e})
     }
   }
@@ -98,7 +98,7 @@ class RootAdmin extends Component {
       clearTimeout(timeout);
       timeout = null;
     }
-    let self = this    
+    let self = this
     fetch('/v1/songtitles', {
         method: 'post',
         credentials: 'include', //配置cookie来获取session
@@ -111,36 +111,35 @@ class RootAdmin extends Component {
     }).then(function(json) {
         if (!json.success) {
           alert(json.error)
-        } else { 
+        } else {
           return self.setState({data: json.data.list})
           console.log(json.data)
         }
     }).catch(function(err) {
         console.log(err)
-    })  
-  } 
-  
+    })
+  }
+
 
 
   renderMenu() {
     var { musiclist } = this.props
     return (
       <Menu onClick={this.handleClick}
-        style={{ width: 240 }}
-        defaultOpenKeys={['sub1']} 
+        defaultOpenKeys={['sub1']}
         mode="inline"
       >
 
-      <Menu.Item key="allsongs">歌曲</Menu.Item> 
+      <Menu.Item key="allsongs">歌曲</Menu.Item>
       <SubMenu key="sub2" title={<span><Icon type="appstore" /><span>歌单</span></span>}>
         {
           musiclist.list.map( (s, index) => {
-            return (  
+            return (
               <Menu.Item key={s._id}>{s.title}</Menu.Item>
               )
           })
         }
-      </SubMenu> 
+      </SubMenu>
     </Menu>
     );
 
@@ -153,24 +152,24 @@ class RootAdmin extends Component {
           {options}
         </Select>
 
-      ) 
+      )
   }
   render() {
     var {isList, songlistId} = this.state
-    var { user, logout, musiclist, songlist, addsonglist, delsong, getlist, delsongtolist, uploadsong } = this.props 
-    
+    var { user, logout, musiclist, songlist, addsonglist, delsong, getlist, delsongtolist, uploadsong } = this.props
+
     const menu = (
       <Menu>
         <Menu.Item>
-          <span onClick={logout}>退出登录</span>   
-        </Menu.Item> 
+          <span onClick={logout}>退出登录</span>
+        </Menu.Item>
       </Menu>
     );
 
     function deletesong(songId) {
       if (isList) {
         delsongtolist(songId, songlistId)
-        // getlist(songlistId) 
+        // getlist(songlistId)
       } else {
         delsong(songId)
       }
@@ -188,16 +187,16 @@ class RootAdmin extends Component {
     }, {
       title: '作者',
       dataIndex: 'author',
-      key: 'author', 
+      key: 'author',
     }, {
       title: '上传者',
       dataIndex: 'username',
-      key: 'username', 
+      key: 'username',
     }, {
       title: 'Action',
       key: 'key',
-      render: (key, record) => ( 
-        <span onClick={deletesong.bind(this, record.key)}>  
+      render: (key, record) => (
+        <span onClick={deletesong.bind(this, record.key)}>
             <a> 删除 </a>
         </span>
       ),
@@ -206,55 +205,55 @@ class RootAdmin extends Component {
       l.key = l._id
     })
     return (
-      <div> 
+      <div>
         <div className="admin-menu">
           {this.renderMenu()}
         </div>
-        <div className="admin-table">   
-          <header className='admin-header'> 
-            <SearchInput 
-              getkey={true}  
-              className={this.state.isList? "": "hidden"}  
-              handleSelect={this.onChangeSelect().bind(this)} 
+        <div className="admin-table">
+          <header className='admin-header'>
+            <SearchInput
+              getkey={true}
+              className={this.state.isList? "": "hidden"}
+              handleSelect={this.onChangeSelect().bind(this)}
               placeholder="搜索歌曲"
             />
 
-            <Button 
+            <Button
               onClick={this.onNew.bind(this)}
             >
               {this.state.isEdit? "返回": "新增"}
             </Button>
-            
+
             <span className="admin-dropdown" style={{float: 'right'}}>
               <Dropdown overlay={menu} trigger={['click']}>
                   <a className="ant-dropdown-link" href="#">
                     {user.username} <Icon type="down" />
-                  </a> 
-              </Dropdown> 
+                  </a>
+              </Dropdown>
             </span>
 
-            <Button 
-              style={{float: 'right'}} 
-              className={this.state.isList? "": "hidden"} 
-              type="dashed" 
-              onClick={this.onDelsonglist.bind(this)} 
+            <Button
+              style={{float: 'right'}}
+              className={this.state.isList? "": "hidden"}
+              type="dashed"
+              onClick={this.onDelsonglist.bind(this)}
             >
               删除此歌单
-            </Button> 
+            </Button>
           </header>
- 
 
-          <Table 
-            pagination={false} 
-            className={this.state.isEdit?"hidden":''} 
-            columns={columns} 
-            dataSource={songlist.list} 
+
+          <Table
+            pagination={false}
+            className={this.state.isEdit?"hidden":''}
+            columns={columns}
+            dataSource={songlist.list}
           />
           <div className="admin-form" className={this.state.isEdit?"":'hidden'}>
             <AdminForm
-             user={this.props.user} 
-             isList={this.state.isList} 
-             addsonglist={addsonglist} 
+             user={this.props.user}
+             isList={this.state.isList}
+             addsonglist={addsonglist}
              uploadsong={uploadsong}
             />
           </div>
@@ -265,21 +264,21 @@ class RootAdmin extends Component {
   }
 }
 
-function mapStateToProps(state) { 
-  return { 
-    user: state.user, 
+function mapStateToProps(state) {
+  return {
+    user: state.user,
     songlist: state.songlist,
     musiclist: state.musiclist
   }
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({   
+  return bindActionCreators({
     getmusiclist: getmusiclistActionClick,
     addsongtolist: addSongToListAction,
     delsongtolist: delSongToListAction,
-    getlist: getsonglistActionClick, 
-    addsongs: addsongsAction, 
+    getlist: getsonglistActionClick,
+    addsongs: addsongsAction,
     getsongs: getallsongActionClick,
     delsong: delallsongActionClick,
     uploadsong: addsongActionClick,
@@ -294,4 +293,4 @@ let Admin = connect(
   mapDispatchToProps
 )(RootAdmin);
 export { RootAdmin }
-export default  Admin 
+export default  Admin

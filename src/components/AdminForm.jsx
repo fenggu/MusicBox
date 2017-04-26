@@ -19,7 +19,7 @@ class RootLogin extends Component {
     this.state = defaultState
   }
 
-  handleSubmit(state) { 
+  handleSubmit(state) {
     var { uploadsong, addsonglist, user } = this.props
     var isList = this.state.isList
     this.props.form.validateFields((err, values) => {
@@ -29,23 +29,23 @@ class RootLogin extends Component {
 
         if (isList == 'list') {
           state.url = ""
-          state.lrc = "" 
+          state.lrc = ""
           state.type = values.type
           state.username = user.username
           addsonglist(state)
-        } 
+        }
 
-        if (isList == 'song') { 
+        if (isList == 'song') {
           state.username = user.username
-          uploadsong(state) 
+          uploadsong(state)
         }
         console.log('Received values of form: ', state);
       }
     });
   }
 
-  onChangeSelect() { 
-    return e => {  
+  onChangeSelect() {
+    return e => {
       this.setState({isList: e})
     }
   }
@@ -56,22 +56,29 @@ class RootLogin extends Component {
       labelCol: { span: 6 },
       wrapperCol: { span: 14 },
     };
-    const uploadSongprops = { 
+    const uploadSongprops = {
       action: '/v1/uploadfile',
       onChange(info) {
         if (info.file.status !== 'uploading') {
           console.log(info.file);
           if (!info.file.error) {
             var url = info.file.response.data.file.path.slice(6)
-            state.url = url 
-          } 
+            state.url = url
+          }
         }
+      },
+      beforeUpload(file) {
+        const isMP3 = file.type === 'audio/mp3';
+        if (!isMP3) {
+          message.error('You can only upload mp3 file!');
+        }
+        return isMP3;
       },
       defaultFileList: [],
     };
 
 
-    const uploadLrcprops = { 
+    const uploadLrcprops = {
       action: '/v1/uploadfile',
       onChange(info) {
         if (info.file.status !== 'uploading') {
@@ -79,25 +86,45 @@ class RootLogin extends Component {
           if (!info.file.error) {
             var lrc = info.file.response.data.file.path.slice(6)
             state.lrc = lrc
-          } 
+          }
         }
+      },
+      beforeUpload(file) {
+        console.log(file)
+        const isLRC = file.type === '';
+        if (!isLRC) {
+          message.error('You can only upload lrc file!');
+        }
+        return isLRC;
       },
       defaultFileList: [],
     };
 
-    const uploadPicprops = { 
+    const uploadPicprops = {
       action: '/v1/uploadfile',
       onChange(info) {
-        if (info.file.status !== 'uploading') { 
+        if (info.file.status !== 'uploading') {
           if (!info.file.error) {
             var pic = info.file.response.data.file.path.slice(6)
-            state.pic = pic 
-          } 
+            state.pic = pic
+          }
         }
+      },
+      beforeUpload(file) {
+        const isJPG = file.type === 'image/jpeg' || file.type === 'image/png';
+        if (!isJPG) {
+          message.error('You can only upload JPG or PNG file!');
+        }
+        const isLt2M = file.size / 1024 / 1024 < 2;
+        if (!isLt2M) {
+          message.error('Image must smaller than 2MB!');
+        }
+        return isJPG && isLt2M;
       },
       defaultFileList: [],
     };
-    const { getFieldDecorator } = this.props.form;  
+
+    const { getFieldDecorator } = this.props.form;
     var onChangeSelect = this.onChangeSelect().bind(this)
     return (
       <div>
@@ -107,7 +134,7 @@ class RootLogin extends Component {
         </Select>
 
         <Form onSubmit={this.handleSubmit.bind(this, state)} className="admin-form">
-          <FormItem 
+          <FormItem
             {...formItemLayout}>
             {getFieldDecorator('title', {
             })(
@@ -118,12 +145,12 @@ class RootLogin extends Component {
 
             className={state.isList=="list"? "hidden":""}
             {...formItemLayout}>
-            {getFieldDecorator('author', { 
+            {getFieldDecorator('author', {
             })(
               <Input addonBefore={<Icon type="user" />} placeholder="author" />
             )}
           </FormItem>
-          
+
 
           <FormItem
             className={state.isList=="list"? "":"hidden"}
@@ -143,7 +170,7 @@ class RootLogin extends Component {
           <FormItem
             {...formItemLayout}
             label="上传音乐"
-            extra="上传音乐"  
+            extra="上传音乐"
             className={state.isList=="list"? "hidden":""}
           >
             <Upload {...uploadSongprops}>
@@ -157,7 +184,7 @@ class RootLogin extends Component {
           <FormItem
             {...formItemLayout}
             label="上传歌词"
-            extra="上传歌词"  
+            extra="上传歌词"
             className={state.isList=="list"? "hidden":""}
           >
             <Upload {...uploadLrcprops}>
@@ -179,7 +206,7 @@ class RootLogin extends Component {
             </Upload>
           </FormItem>
 
-          <FormItem> 
+          <FormItem>
             <Button type="primary" htmlType="submit" className="login-form-button">
               提交
             </Button>

@@ -1,22 +1,22 @@
 import React, { Component } from 'react';
 import { Router, Route, browserHistory, Link ,IndexRoute, Redirect} from 'react-router';
-import { Home, List, DeskTop, AdminDeskTop, About, Login, Sign, MusicBox, Admin, AdminLogin } from './index.js' 
-import { Provider, connect } from 'react-redux'; 
+import { Home, List, DeskTop, AdminDeskTop, About, Login, Sign, MusicBox, Admin, AdminLogin } from './index.js'
+import { Provider, connect } from 'react-redux';
 import thunk from 'redux-thunk'
 import createLogger from 'redux-logger'
 import { createStore, applyMiddleware } from 'redux';
-import reducer from '../Redux/reducers.js'; 
+import reducer from '../Redux/reducers.js';
 // import '../public/iconfont.css'
 import './index.less';
 
-var initState = { 
+var initState = {
   user: {
     loggedIn: false,
     username: "", //username
     likes: [], //我喜欢
     history: [], //最近播放
     songlist: [] //我的歌单
-  }, 
+  },
   songlist: {
     list: []
   },
@@ -38,7 +38,7 @@ var initState = {
     list: [],
     pic: '../public/mdl.png'
   }
-}    
+}
 if (!localStorage.songs) {
   localStorage.songs = JSON.stringify(initState.songs)
 } else {
@@ -52,41 +52,41 @@ if (!localStorage.history) {
   initState.history = JSON.parse(localStorage.history)
 }
 
-const logger = createLogger() 
+const logger = createLogger()
 const createStoreWithMiddleware = applyMiddleware(
-  thunk, 
+  thunk,
   logger
 )(createStore);
 
 let store = createStoreWithMiddleware(reducer,initState);
 
-class App extends Component { 
+class App extends Component {
   constructor(props) {
     super(props);
   }
 
-  render() { 
+  render() {
     return (
         <Provider store={store}>
           <div>
             <Router history={ browserHistory }>
-              <Route path="/" component={ DeskTop }> 
-                <IndexRoute component={ Home }/>  
-                <Route path="/musicbox" component={ MusicBox }/> 
-                <Route path="/list/:id" component={ List }> 
+              <Route path="/" component={ DeskTop }>
+                <IndexRoute component={ Home }/>
+                <Route path="/musicbox" component={ MusicBox }/>
+                <Route path="/list/:id" component={ List }>
                   <Redirect form="/list/list/:id" to="/list/:id"/>
-                </Route>  
-                <Route path="/login" component={ Login }/>  
-                <Route path="/sign" component={ Sign }/>   
-                <Route path="/about" component={ About }/>   
-              </Route> 
+                </Route>
+                <Route path="/login" component={ Login }/>
+                <Route path="/sign" component={ Sign }/>
+                <Route path="/about" component={ About }/>
+              </Route>
               <Route path="/admin" component={ AdminDeskTop }>
-                <IndexRoute component={ Admin }/> 
+                <IndexRoute component={ Admin }/>
                 <Route path='login' component={ AdminLogin } />
               </Route>
-            </Router>  
+            </Router>
           </div>
-        </Provider> 
+        </Provider>
     );
   }
 }
