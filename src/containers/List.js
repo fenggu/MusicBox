@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Link } from 'react-router'; 
+import { Link } from 'react-router';
 import { getlistAction } from '../Redux/actions.js'
 import { bindActionCreators } from 'redux'
 import { getsonglistAction, getsonglistActionClick, getallsongActionClick, gethistoryAction, getnextsongAction, addlikelistActionClick, getlikesActionClick, addsongsAction } from '../Redux/actions'
@@ -12,9 +12,9 @@ class RootList extends Component {
         paused: true
     }
     constructor(props) {
-        super(props); 
-        this.state = this.defaultState 
-    } 
+        super(props);
+        this.state = this.defaultState
+    }
 
     toLittle(content) { //缩短字体
         var newcontent = ""
@@ -23,7 +23,7 @@ class RootList extends Component {
             newcontent = content.slice(0, 200) + "..."
         } else {
             newcontent = content;
-        } 
+        }
         return newcontent
     }
 
@@ -54,13 +54,13 @@ class RootList extends Component {
         if (Ids.indexOf(song._id) <= -1) {
             songs.list.push(song)
             addsongs(songs) //分发到 store
-            var str = JSON.stringify(songs); 
-            localStorage.songs = str 
+            var str = JSON.stringify(songs);
+            localStorage.songs = str
         }
         localhistory.list.map( s => {
             Hids.push(s._id)
         })
-        var h = Hids.indexOf(song._id) 
+        var h = Hids.indexOf(song._id)
         if (h <= -1) {
             localhistory.list.unshift(song)
             localhistory.title = "播放历史"
@@ -78,37 +78,37 @@ class RootList extends Component {
         changesong(song)
     }
 
-    playlist(){ 
+    playlist(){
         var { songlist } = this.props
         var list = songlist.list
         for (var i = list.length-1; i > -1; i--) {
             this.onChangeSong(list[i])
-        } 
+        }
     }
 
-    componentWillMount() { 
+    componentWillMount() {
         const { getlist, getthissongs, song, getsongs, getlikes, gethistory, history, songs } = this.props
         var params = this.props.params
-        var id = params.id  
+        var id = params.id
         if (id == "likes") {
             getlikes()
-            return 
+            return
         }
         if (id == 'history') {
             var localhistory = JSON.parse(localStorage.history)
             gethistory(localhistory)
             return
-        } 
+        }
         if (id == 'all') {
             getsongs()
             return
         }
         if (id == 'songs') {
-            songs.title = '正在播放' 
+            songs.title = '正在播放'
             songs.pic = '../public/default.jpg'
-            if (!song) return 
+            if (!song) return
             if (song.pic) {
-                songs.pic = song.pic 
+                songs.pic = song.pic
             }
             getthissongs(songs)
             return
@@ -116,19 +116,19 @@ class RootList extends Component {
         if (id.indexOf('search') > -1) {
             var n = id.indexOf('search')
             var value = id.slice(6)
-            getsongs(value) 
-            return 
+            getsongs(value)
+            return
         }
-        getlist(id)  
+        getlist(id)
 
     }
 
-    render() {    
+    render() {
         var { songlist, songs, changesong, addlike, addsongs } = this.props
         var { paused } = this.state
-        var list = songlist.list  
-        return ( 
-            <div className="list"> 
+        var list = songlist.list
+        return (
+            <div className="list">
                 <TopBar title={songlist.title} />
                 <div className='list-header'>
                     <img src={songlist.pic} alt=""/>
@@ -141,7 +141,7 @@ class RootList extends Component {
                         <i className="iconfont icon-bofang1" onClick={this.playlist.bind(this)}></i>
                     </h2>
                 </div>
-                <header>  
+                <header>
                 </header>
                 <SongList songlist={list} addsongs={addsongs} songs={songs} onChangeSong={this.onChangeSong} changesong={changesong}/>
             </div>
@@ -151,7 +151,7 @@ class RootList extends Component {
 
 function mapStateToProps(state) {
     // 这里拿到的state就是store里面给的state
-    return {  
+    return {
         user: state.user,
         songlist: state.songlist,
         songs: state.songs,
@@ -161,8 +161,8 @@ function mapStateToProps(state) {
 }
 
 // Map Redux actions to component props
-function mapDispatchToProps(dispatch) {   
-    return bindActionCreators({   
+function mapDispatchToProps(dispatch) {
+    return bindActionCreators({
         changesong: getnextsongAction,
         gethistory: gethistoryAction,
         getthissongs: getsonglistAction,

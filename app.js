@@ -2,13 +2,12 @@ require('babel-register');
 require("babel-polyfill");
 
 var express = require('express');
-var app = express(); 
+var app = express();
 var session = require('express-session');
 var MongoStore = require('connect-mongo')(session);
 var MongoClient = require('mongodb').MongoClient;
-var cookieParser = require('cookie-parser'); 
+var cookieParser = require('cookie-parser');
 global.ObjectID = require('mongodb').ObjectID;
-const EventEmitter = require('events');
 
 global._ = require('lodash');
 
@@ -25,7 +24,7 @@ MongoClient.connect('mongodb://localhost:27017/' + dbn, function(err, instance) 
     global.db = instance;
     console.log('database connected:', dbn);
 
-    //bodyparser中间件 
+    //bodyparser中间件
     var bodyParser = require('body-parser')
     var jsonParser = bodyParser.json();
     var app = express();
@@ -35,12 +34,12 @@ MongoClient.connect('mongodb://localhost:27017/' + dbn, function(err, instance) 
     app.use(cookieParser());
 
     var MongoStore = require('connect-mongo')(session);
-   
+
 
     app.use(cookieParser());
     app.use(session({
         secret: 'music',
-        name: 'music', 
+        name: 'music',
         resave: false,
         saveUninitialized: false,
         store: new MongoStore({   //创建新的mongodb数据库
@@ -65,4 +64,3 @@ MongoClient.connect('mongodb://localhost:27017/' + dbn, function(err, instance) 
 
     });
 });
-  

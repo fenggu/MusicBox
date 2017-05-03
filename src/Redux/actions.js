@@ -8,7 +8,7 @@ export const next = 'next'; //下一首
 
 /******* ajax ********/
 export const adduser = 'adduser'; //注册
-export const login = 'login'; //登录 
+export const login = 'login'; //登录
 export const getsongs = 'getsongs'; //获取当前播放列表
 export const gethistory = 'gethistory'; //获取最近播放
 export const getlikes = 'getlikes'; //获取收藏
@@ -17,7 +17,7 @@ export const likelist = 'likelist'; //添加收藏
 export const getsonglist = 'getsonglist'; //获取歌单
 export const getplaylist = 'getplaylist'; //获取歌单列表 楼上父级
 export const getmusiclist = 'getmusiclist'; //获取音乐馆列表
-export const searchmusic = 'searchmusic'; //搜索音乐 
+export const searchmusic = 'searchmusic'; //搜索音乐
 export const searchmusicname = 'searchmusicname'; //搜索框提示名字
 export const addsongs = 'addsongs'; //添加song到localstorge
 export const getallsongs = 'getallsongs';
@@ -53,7 +53,7 @@ export function adduserAction(user) { //注册
             })
         }).then(function(response) {
             return response.json()
-        }).then(function(json) { 
+        }).then(function(json) {
             if (!json.success) {
                 message.error(json.error)
             } else {
@@ -86,7 +86,7 @@ export function loginAction(user) { //登录
                 message.error(json.error)
             } else {
                 dispatch(getuser(json.data))
-                // browserHistory.push("/") 
+                // browserHistory.push("/")
             }
         }).catch(function(err) {
             console.log(err)
@@ -107,9 +107,9 @@ export function autoLoginAction() { //自动登录
             return response.json()
         }).then(function(json) {
             if (json.success == false) {
-                console.log(json.error)
+                message.error(json.error)
             } else {
-                dispatch(getuser(json.data)) 
+                dispatch(getuser(json.data))
             }
         }).catch(function(err) {
             console.log(err)
@@ -130,9 +130,9 @@ export function LogoutAction() { //退出登录
             return response.json()
         }).then(function(json) {
             if (json.success == false) {
-                console.log(json.error)
+                message.error(json.error)
             } else {
-                dispatch(getuser(json.data))  
+                dispatch(getuser(json.data))
                 window.location.reload();
             }
         }).catch(function(err) {
@@ -156,9 +156,9 @@ export function getmusiclistActionClick() {
             return response.json()
         }).then(function(json) {
             if (!json.success) {
-                console.log(json.error)
+                message.error(json.error)
             } else {
-                dispatch(getmusiclistAction(json.data)) 
+                dispatch(getmusiclistAction(json.data))
             }
         }).catch(function(err) {
             console.log(err)
@@ -166,7 +166,7 @@ export function getmusiclistActionClick() {
     }
 }
 
-export function getsonglistAction(list) { 
+export function getsonglistAction(list) {
     return { type: getsonglist, list: list }
 }
 
@@ -182,9 +182,9 @@ export function getsonglistActionClick (id) {
             return response.json()
         }).then(function(json) {
             if (!json.success) {
-                console.log(json.error)
+                message.error(json.error)
             } else {
-                dispatch(getsonglistAction(json.data)) 
+                dispatch(getsonglistAction(json.data))
             }
         }).catch(function(err) {
             console.log(err)
@@ -205,9 +205,9 @@ export function getallsongActionClick (name) {
             return response.json()
         }).then(function(json) {
             if (!json.success) {
-                console.log(json.error)
+                message.error(json.error)
             } else {
-                dispatch(getsonglistAction(json.data)) 
+                dispatch(getsonglistAction(json.data))
             }
         }).catch(function(err) {
             console.log(err)
@@ -225,14 +225,13 @@ export function delallsongActionClick (id) {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
-        }).then(function(response) { 
+        }).then(function(response) {
             return response.json()
         }).then(function(json) {
-            console.log(json)
             if (!json.success) {
                 message.error(json.error)
             } else {
-                dispatch(getallsongActionClick()) 
+                dispatch(getallsongActionClick())
                 message.success('删除成功');
             }
         }).catch(function(err) {
@@ -250,7 +249,7 @@ export function addsongActionClick (song) {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ 
+            body: JSON.stringify({
                 title: song.title,
                 url: song.url,
                 author: song.author,
@@ -265,7 +264,7 @@ export function addsongActionClick (song) {
                 message.error(json.error)
             } else {
                 message.success('上传成功！ ')
-                dispatch(getallsongActionClick()) 
+                dispatch(getallsongActionClick())
             }
         }).catch(function(err) {
             console.log(err)
@@ -282,8 +281,8 @@ export function addsonglistActionClick (song) {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ 
-                title: song.title,  
+            body: JSON.stringify({
+                title: song.title,
                 pic: song.pic,
                 type: song.type
             })
@@ -291,10 +290,10 @@ export function addsonglistActionClick (song) {
             return response.json()
         }).then(function(json) {
             if (!json.success) {
-                console.log(json.error)
+                message.error(json.error)
             } else {
                 message.success('添加成功！ ')
-                dispatch(getmusiclistActionClick()) 
+                dispatch(getmusiclistActionClick())
             }
         }).catch(function(err) {
             console.log(err)
@@ -311,17 +310,17 @@ export function delsonglistActionClick (songlistId) {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({  
+            body: JSON.stringify({
                 songlistId: songlistId
             })
         }).then(function(response) {
             return response.json()
         }).then(function(json) {
             if (!json.success) {
-                console.log(json.error)
+                message.error(json.error)
             } else {
-                dispatch(getmusiclistActionClick())  
-                dispatch(getsonglistActionClick(songlistId)) 
+                dispatch(getmusiclistActionClick())
+                dispatch(getsonglistActionClick(songlistId))
                 message.success('删除成功');
             }
         }).catch(function(err) {
@@ -339,15 +338,15 @@ export function addlikesongActionClick(id) { //添加收藏
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ 
+            body: JSON.stringify({
                 songId: id
             })
         }).then(function(response) {
             return response.json()
-        }).then(function(json) { 
+        }).then(function(json) {
             if (!json.success) {
                 message.error(json.error)
-            } else { 
+            } else {
                 dispatch(getuser(json.data))
             }
         }).catch(function(err) {
@@ -355,7 +354,7 @@ export function addlikesongActionClick(id) { //添加收藏
         });
     }
 }
-   
+
 export function addlikelistActionClick(id) { //添加收藏
     return dispatch => {
         return fetch('/v1/user/likelist', {
@@ -370,10 +369,10 @@ export function addlikelistActionClick(id) { //添加收藏
             })
         }).then(function(response) {
             return response.json()
-        }).then(function(json) { 
+        }).then(function(json) {
             if (!json.success) {
-                console.log(json.error)
-            } else { 
+                message.error(json.error)
+            } else {
                 dispatch(getuser(json.data))
             }
         }).catch(function(err) {
@@ -397,10 +396,10 @@ export function getplaylistActionClick() {
             }
         }).then(function(response) {
             return response.json()
-        }).then(function(json) { 
+        }).then(function(json) {
             if (!json.success) {
                 console.log(json.error)
-            } else { 
+            } else {
                 dispatch(getplaylistAction(json.data))
             }
         }).catch(function(err) {
@@ -427,17 +426,18 @@ export function getlikesActionClick (id) {
             return response.json()
         }).then(function(json) {
             if (!json.success) {
-                console.log(json.error)
+                message.error(json.error)
+                browserHistory.push('/')
             } else {
-                dispatch(getsonglistAction(json.data)) 
+                dispatch(getsonglistAction(json.data))
             }
         }).catch(function(err) {
-            console.log(err)
+            message.error(err)
         })
     }
 }
 
-export function addsongsAction(songs) { 
+export function addsongsAction(songs) {
     return { type: addsongs, songs: songs}
 }
 
@@ -451,23 +451,23 @@ export function addSongToListAction (songId, songlistId) {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ 
+            body: JSON.stringify({
                 songId: songId,
-                songlistId: songlistId 
+                songlistId: songlistId
             })
         }).then(function(response) {
             return response.json()
         }).then(function(json) {
             if (!json.success) {
                 message.error(json.error);
-            } else { 
+            } else {
                 dispatch(getsonglistActionClick(songlistId))
-                message.success('添加成功'); 
+                message.success('添加成功');
             }
         }).catch(function(err) {
             console.log(err)
         })
-    } 
+    }
 }
 export function delSongToListAction (songId, songlistId) {
     return dispatch => {
@@ -478,19 +478,18 @@ export function delSongToListAction (songId, songlistId) {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ 
+            body: JSON.stringify({
                 songId: songId,
-                songlistId: songlistId 
+                songlistId: songlistId
             })
         }).then(function(response) {
             return response.json()
         }).then(function(json) {
             if (!json.success) {
-                console.log(json.error)
                 message.error(json.error);
 
-            } else { 
-                dispatch(getsonglistActionClick(songlistId)) 
+            } else {
+                dispatch(getsonglistActionClick(songlistId))
                 message.success('删除成功');
 
             }
