@@ -21,6 +21,7 @@ import { Menu, Dropdown, Select, Icon, Input, Table, Button } from 'antd';
 const SubMenu = Menu.SubMenu;
 const MenuItemGroup = Menu.ItemGroup;
 const Option = Select.Option;
+const Search = Input.Search;
 
 let timeout;
 
@@ -156,7 +157,7 @@ class RootAdmin extends Component {
   }
   render() {
     var {isList, songlistId} = this.state
-    var { user, logout, musiclist, songlist, addsonglist, delsong, getlist, delsongtolist, uploadsong } = this.props
+    var { user, logout, musiclist, songlist, addsonglist, delsong, getlist, delsongtolist, uploadsong, getsongs } = this.props
 
     const menu = (
       <Menu>
@@ -217,9 +218,19 @@ class RootAdmin extends Component {
               handleSelect={this.onChangeSelect().bind(this)}
               placeholder="搜索歌曲"
             />
+            <div
+              style={{ width: 200, display: 'inline-block'}}
+              className={this.state.isEdit || this.state.isList? "hidden": ""}>
+              <Search
+                placeholder="输入歌曲关键字"
+                onSearch={value => getsongs(value)}
+                onBlur={e => { getsongs(e.target.value) } }
+              />
 
+            </div>
             <Button
               onClick={this.onNew.bind(this)}
+              style={{'float':'right'}}
             >
               {this.state.isEdit? "返回": "新增"}
             </Button>
@@ -244,7 +255,6 @@ class RootAdmin extends Component {
 
 
           <Table
-            pagination={false}
             className={this.state.isEdit?"hidden":''}
             columns={columns}
             dataSource={songlist.list}
