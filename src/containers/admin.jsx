@@ -230,7 +230,7 @@ class RootAdmin extends Component {
             </div>
             <Button
               onClick={this.onNew.bind(this)}
-              style={{'float':'right'}}
+              className={this.state.isList? '': 'right'}
             >
               {this.state.isEdit? "返回": "新增"}
             </Button>
