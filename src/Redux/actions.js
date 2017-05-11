@@ -320,7 +320,10 @@ export function delsonglistActionClick (songlistId) {
                 message.error(json.error)
             } else {
                 dispatch(getmusiclistActionClick())
-                dispatch(getsonglistActionClick(songlistId))
+                var data = {
+                    list: []
+                }
+                dispatch(getsonglistAction(data))
                 message.success('删除成功');
             }
         }).catch(function(err) {

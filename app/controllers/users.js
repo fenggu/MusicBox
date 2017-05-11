@@ -489,6 +489,9 @@ var getSonglist = async(req, res) => {
     if (params.id == "undefined") {
         return res.json({
             success: false,
+            data: {
+                list: []
+            },
             error: '歌单请求错误！'
         })
     }
