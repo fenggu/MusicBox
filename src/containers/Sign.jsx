@@ -31,7 +31,10 @@ class RootSign extends Component {
         const { handleSign } = this.props
         const { getFieldsValue, validateFields } = this.props.form;
         var user = getFieldsValue()
-        console.log(getFieldsValue())
+        user.password = user.password.trim()
+        user.passwordConfirm = user.passwordConfirm.trim()
+        user.password = CryptoJS.SHA256(user.password).toString()
+        user.passwordConfirm = CryptoJS.SHA256(user.passwordConfirm).toString()
         validateFields((errors) => {
           if (errors) {
             return false

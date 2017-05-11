@@ -28,6 +28,8 @@ class RootLogin extends Component {
         const { handleLogin } = this.props
         const { getFieldsValue, validateFields } = this.props.form;
         var user = getFieldsValue()
+        user.password = user.password.trim()
+        user.password = CryptoJS.SHA256(user.password).toString()
         validateFields((errors) => {
           if (errors) {
             return false
