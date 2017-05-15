@@ -246,22 +246,20 @@ class RootPlayer extends Component {
         if (!lrc) return false
         var lyrics = lrc.split('\n');
         var lrcObj = {}
-        lrcObj.txt = []
         lrcObj.time = []
         for(var i=0; i<lyrics.length; i++){
-            var lyric = decodeURIComponent(lyrics[i]);
+            var lyric = lyrics[i]
             var timeReg = /\[\d*:\d*((\.|\:)\d*)*\]/g;
             var timeRegExpArr = lyric.match(timeReg);
             if (!timeRegExpArr) {continue;}
             var clause = lyric.replace(timeReg,'');
-            lrcObj.txt.push(clause)
             for(var k = 0,h = timeRegExpArr.length;k < h;k++) {
                 var t = timeRegExpArr[k];
                 var min = Number(String(t.match(/\[\d*/i)).slice(1)),
                     sec = Number(String(t.match(/\:\d*/i)).slice(1));
                 var time = min * 60 + sec;
-                lrcObj.time.push(time)
-                lrcObj[time] =clause
+                lrcObj.time.push(time) // 转为currentTime
+                lrcObj[time] = clause
             }
         }
         return lrcObj
@@ -290,7 +288,6 @@ class RootPlayer extends Component {
         if (lrc) {
             var lrcObj = this.getLrc(lrc)
             var timer = lrcObj.time;
-            var lrctxt = lrcObj.txt
             var currentTime = audio.currentTime
             var lrcgress = - parseFloat(progress)
             var lrcbody = this.refs.lrc
