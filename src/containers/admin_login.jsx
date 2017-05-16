@@ -1,9 +1,9 @@
-import React, { Component } from 'react'; 
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux'  
+import { bindActionCreators } from 'redux'
 import { Form, Icon, Input, Button, Checkbox } from 'antd';
 import { Link, browserHistory } from 'react-router';
-import { loginAction } from '../Redux/actions.js'  
+import { loginAction } from '../Redux/actions.js'
 const FormItem = Form.Item;
 
 class RootLogin extends Component {
@@ -17,27 +17,29 @@ class RootLogin extends Component {
       }
       this.state = defaultState
   }
-  
+
   handleSubmit = e => {
       e.preventDefault();
-      const { handleLogin } = this.props 
+      const { handleLogin } = this.props
       const { getFieldsValue, validateFields } = this.props.form;
       var user = getFieldsValue()
+      user.password = user.password.trim()
+      user.password = CryptoJS.SHA256(user.password).toString()
       validateFields((errors) => {
         if (errors) {
           return false
         }
         handleLogin(user)
-      }) 
+      })
   }
 
-  componentWillReceiveProps(nextProps) { 
+  componentWillReceiveProps(nextProps) {
     if (nextProps.user.loggedIn) {
       browserHistory.push('/admin')
     }
   }
-  
-  render() { 
+
+  render() {
     const { getFieldDecorator } = this.props.form;
     return (
       <Form onSubmit={this.handleSubmit} style={{maxWidth: 300, margin: '50px auto'}}  className="login-form">
@@ -56,10 +58,10 @@ class RootLogin extends Component {
             <Input addonBefore={<Icon type="lock" />} type="password" placeholder="Password" />
           )}
         </FormItem>
-        <FormItem>  
+        <FormItem>
           <Button type="primary" htmlType="submit" className="login-form-button">
             Log in
-          </Button> 
+          </Button>
         </FormItem>
       </Form>
     );
@@ -86,5 +88,4 @@ let Login = connect(
     mapDispatchToProps
 )(LoginForm);
  export { RootLogin }
-export default  Login 
- 
+export default  Login
